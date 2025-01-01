@@ -1,5 +1,5 @@
 package name.coreycarter;
-import name.coreycarter.password;
+//import name.coreycarter.password;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -36,12 +36,12 @@ public class App
     }
     
     public static void getTransactionDistribution(Connection conn) throws SQLException {
-        String query = "SHOW VARIABLES LIKE '%version%'";
+        String query = "SELECT * from studtend_table";
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
-            System.out.println("Transaction Distribution Across Date Ranges:");
             while (rs.next()) {
-                System.out.println("Month: " + rs.getString("Variable_name"));
+                System.out.println("names : " + rs.getString("name_"));
+                System.out.println("information : " + rs.getInt("stu_id_"));
             }
         }
     }
