@@ -22,3 +22,8 @@ buildNumber.properties
 
 # End of https://www.toptal.com/developers/gitignore/api/maven
 target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
+src/main/java/name/coreycarter/password.java
+*.classpath
+*.class
+target/classes/name/coreycarter/App.class
+target/classes/name/coreycarter/App.class
