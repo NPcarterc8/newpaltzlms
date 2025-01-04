@@ -15,4 +15,4 @@ The findings aim to establish the potential of scheduling-enhanced LMS platforms
 
 ## Thesis Advisors
 **Primary Advisor Name:** Dr. David McClosky  
-**Secondary Advisor Name:** Dr. Ashley Suchy (Computer Science Department)
+**Secondary Advisor Name:** Dr. Ashley Suchy (SUNY New Paltz Computer Science Department)
