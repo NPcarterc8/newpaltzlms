@@ -1,4 +1,4 @@
-package name.coreycarter;
+package name.coreycarter.Connections;
 //import name.coreycarter.password;
 import java.sql.Connection;
 import java.sql.DriverManager;

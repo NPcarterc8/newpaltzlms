@@ -1,10 +1,9 @@
 package name.coreycarter;
-import name.coreycarter.classes.*;
+import name.coreycarter.classes.Students;
 
 public class schedule {
-        static int x = 5;
         public static void main(String[] args) {
           Students myObj = new Students();
-          System.out.println(myObj.x);
+          
         }
 }

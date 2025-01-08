@@ -27,3 +27,4 @@ src/main/java/name/coreycarter/password.java
 *.class
 target/classes/name/coreycarter/App.class
 target/classes/name/coreycarter/App.class
+src/main/java/name/coreycarter/Connections/password.java
