@@ -15,29 +15,15 @@ public class Students extends dbconn {
     }
     
     public String getAllFromStudentTable() throws SQLException {
-        String query = "SELECT * from studtend_table";
+        String query = "SELECT * from student_table";
         try (Statement stmts = this.con.createStatement();
              ResultSet rs = stmts.executeQuery(query)) {
             StringBuilder result = new StringBuilder();
             while (rs.next()) {
-                result.append("names : ").append(rs.getString("name_"))
-                      .append(", information : ").append(rs.getInt("stu_id_")).append("\n");
+                result.append("names : ").append(rs.getString("name"))
+                      .append(", information : ").append(rs.getInt("stu_id")).append("\n");
             }
             return result.toString();
         }
     }
-    /*
-    public String getAllFromStudentTable() throws SQLException {
-        String query = "SELECT * from studtend_table";
-        try (Statement stmts = this.con.createStatement();
-             ResultSet rs = stmts.executeQuery(query)) {
-            StringBuilder result = new StringBuilder();
-            while (rs.next()) {
-                result.append("names : ").append(rs.getString("name_"))
-                      .append(", information : ").append(rs.getInt("stu_id_")).append("\n");
-            }
-            return result.toString();
-        }
-    }
-    */
 }
