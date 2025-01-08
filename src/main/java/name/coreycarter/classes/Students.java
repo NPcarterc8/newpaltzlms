@@ -26,9 +26,6 @@ public class Students extends dbconn {
             return result.toString();
         }
     }
-    public String sayHi(){
-        return "hello world";
-    }
     /*
     public String getAllFromStudentTable() throws SQLException {
         String query = "SELECT * from studtend_table";
