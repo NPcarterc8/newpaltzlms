@@ -8,11 +8,11 @@ import java.util.LinkedList;
 
 import name.coreycarter.Connections.dbconn;
 
-public class Course extends dbconn {
+public class Course {
     Connection con;
 
     public Course() throws SQLException, ClassNotFoundException {
-        this.con = getConnection();
+        this.con = new dbconn().getConnection();
     }
     
     public String getAllNamesOfClasses() throws SQLException {
@@ -26,12 +26,13 @@ public class Course extends dbconn {
             return result.toString();
         }
     }
+    
     public LinkedList<String> csOrder() throws SQLException {
         LinkedList<String> computerscience_order = new LinkedList<String>();
         String query = "SELECT * from course_table";
         try (Statement stmts = this.con.createStatement();
              ResultSet rs = stmts.executeQuery(query)) {
-            StringBuilder result = new StringBuilder();
+            //StringBuilder result = new StringBuilder();
             while (rs.next()) {
                 computerscience_order.add(rs.getString("name"));
             }

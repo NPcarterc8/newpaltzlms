@@ -7,11 +7,11 @@ import java.sql.Statement;
 
 import name.coreycarter.Connections.dbconn;
 
-public class Students extends dbconn {
+public class Students {
     Connection con;
 
     public Students() throws SQLException, ClassNotFoundException {
-        this.con = getConnection();
+        this.con = new dbconn().getConnection();
     }
     
     public String getAllFromStudentTable() throws SQLException {
