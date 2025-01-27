@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.LinkedList;
 
 import name.coreycarter.Connections.dbconn;
 
@@ -27,13 +26,18 @@ public class Course {
         }
     }
     
-    public LinkedList<String> csOrder() throws SQLException {
-        LinkedList<String> computerscience_order = new LinkedList<String>();
+    public Graph<String> csOrder() throws SQLException {
+        Graph<String> computerscience_order = new Graph<String>();
         String query = "SELECT name from course_table";
         try (Statement stmts = this.con.createStatement();
              ResultSet rs = stmts.executeQuery(query)) {
+            String previous = null;
             while (rs.next()) {
-                computerscience_order.add(rs.getString("name"));
+                String current = rs.getString("name");
+                if (previous != null) {
+                    computerscience_order.addEdge(previous, current, true);
+                }
+                previous = current;
             }
             return computerscience_order;
         }
