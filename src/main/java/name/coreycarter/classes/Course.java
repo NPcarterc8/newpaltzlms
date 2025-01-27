@@ -16,7 +16,7 @@ public class Course {
     }
     
     public String getAllNamesOfClasses() throws SQLException {
-        String query = "SELECT * from course_table";
+        String query = "SELECT name from course_table";
         try (Statement stmts = this.con.createStatement();
              ResultSet rs = stmts.executeQuery(query)) {
             StringBuilder result = new StringBuilder();
@@ -29,16 +29,13 @@ public class Course {
     
     public LinkedList<String> csOrder() throws SQLException {
         LinkedList<String> computerscience_order = new LinkedList<String>();
-        String query = "SELECT * from course_table";
+        String query = "SELECT name from course_table";
         try (Statement stmts = this.con.createStatement();
              ResultSet rs = stmts.executeQuery(query)) {
-            //StringBuilder result = new StringBuilder();
             while (rs.next()) {
                 computerscience_order.add(rs.getString("name"));
             }
             return computerscience_order;
         }
     }
-
-    
 }
