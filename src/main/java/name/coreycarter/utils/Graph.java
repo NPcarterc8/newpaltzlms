@@ -1,4 +1,4 @@
-package name.coreycarter.classes;
+package name.coreycarter.utils;
 import java.util.*;
 
 public class Graph<T> {

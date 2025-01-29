@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import name.coreycarter.Connections.dbconn;
+import name.coreycarter.utils.Graph;
 
 public class Course {
     Connection con;
@@ -35,7 +36,7 @@ public class Course {
             while (rs.next()) {
                 String current = rs.getString("name");
                 if (previous != null) {
-                    computerscience_order.addEdge(previous, current, true);
+                    computerscience_order.addEdge(previous, current, false);
                 }
                 previous = current;
             }
