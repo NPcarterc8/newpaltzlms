@@ -5,6 +5,7 @@ public class Graph<T> {
 
     // We use Hashmap to store the edges in the graph
     private Map<T, List<T> > map = new HashMap<>();
+    
 
     // This function adds a new vertex to the graph
     public void addVertex(T s)
@@ -91,6 +92,12 @@ public void neighbours(T s)
         System.out.print(w+",");
 }
 
+//public List<T> topologicalSort(){
+    //return List<T>;
+    
+    
+//}
+
     // Prints the adjancency list of each vertex.
     @Override public String toString()
     {
@@ -106,4 +113,5 @@ public void neighbours(T s)
 
         return (builder.toString());
     }
+    
 }
