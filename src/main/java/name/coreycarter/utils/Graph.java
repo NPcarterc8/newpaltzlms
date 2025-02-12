@@ -1,4 +1,5 @@
 package name.coreycarter.utils;
+import java.lang.classfile.components.ClassPrinter;
 import java.util.*;
 
 public class Graph<T> {
@@ -83,7 +84,7 @@ public class Graph<T> {
     }
 }
 
-public void neighbours(T s)
+public void printneighbours(T s)
 {
     if(!map.containsKey(s)) 
         return ;
@@ -91,12 +92,20 @@ public void neighbours(T s)
     for(T w:map.get(s))
         System.out.print(w+",");
 }
+public List<T>Tneighbours(T s){
 
-//public List<T> topologicalSort(){
-    //return List<T>;
+    return map.getOrDefault(s,Collections.emptyList());
+}
+public Set<T> nodeset(){
+    return map.keySet();
+}
+
+
+public List<T> topologicalSortM(){
+    TopologicalSort<T> x = new TopologicalSort<>(this);
+    return x.topologicalSort();
     
-    
-//}
+}
 
     // Prints the adjancency list of each vertex.
     @Override public String toString()
