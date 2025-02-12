@@ -1,4 +1,4 @@
-package name.coreycarter;
+package name.coreycarter.utils;
 
 //package name.coreycarter;
 import java.util.ArrayList;
