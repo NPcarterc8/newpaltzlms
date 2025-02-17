@@ -1,21 +1,26 @@
 package name.coreycarter;
-import java.sql.SQLException;
-
 import name.coreycarter.utils.Graph;
+
 public class main {
-    public static void main(String args[]) throws SQLException, ClassNotFoundException {
-        Graph<Integer> graph = new Graph<>();
-        graph.addEdge(1, 2, false);
-        graph.addEdge(1, 3, false);
-        graph.addEdge(2, 4, false);
-        graph.addEdge(3, 4, false);
+    public static void main(String args[]) {
+        Graph<String> courseGraph = new Graph<>();
+        
+        // Example Courses
+        courseGraph.addEdge("Math 101", "Math 102", false, false); // Math 101 → Math 102
+        courseGraph.addEdge("Math 101", "Physics 101", false, false); // Math 101 → Physics 101
+        courseGraph.addEdge("CS 101", "CS 102", false, false); // CS 101 → CS 102
+        courseGraph.addEdge("CS 102", "CS 201", false, false); // CS 102 → CS 201
+        courseGraph.addEdge("CS 102", "Algorithms", false, false); // CS 102 → Algorithms
+        courseGraph.addEdge("Physics 101", "Physics 102", false, false); // Physics 101 → Physics 102
+        
+        // Co-requisite: Take "Lab 101" and "Physics 101" together
+        courseGraph.addEdge("Physics 101", "Lab 101", true, true); // Bidirectional → Co-Req
+        
         try {
-            System.err.println(graph.topologicalSortM());
+            System.out.println("Course Order: " + courseGraph.topologicalSortM());
         } catch (RuntimeException e) {
             e.printStackTrace();
             System.out.println(e.getMessage());
         }
-        
     }
 }
- 

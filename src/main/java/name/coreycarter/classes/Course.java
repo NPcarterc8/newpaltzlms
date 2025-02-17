@@ -36,7 +36,7 @@ public class Course {
             while (rs.next()) {
                 String current = rs.getString("name");
                 if (previous != null) {
-                    computerscience_order.addEdge(previous, current, false);
+                    computerscience_order.addEdge(previous, current, false, false);
                 }
                 previous = current;
             }

@@ -43,19 +43,31 @@ private List<T> sortedNodes = new ArrayList<>();
         if (temporaryMarks.contains(node)) {
             return false; // Cycle detected
         }
-        
+    
         temporaryMarks.add(node);
-        
+    
+        // Visit prerequisites first
         for (T neighbor : graph.Tneighbours(node)) {
             if (!visit(neighbor)) {
                 return false;
             }
         }
-        
+    
+        // Add co-requisites in the same batch
+        if (graph.getCoRequisites().containsKey(node)) {
+            for (T coReq : graph.getCoRequisites().get(node)) {
+                if (!permanentMarks.contains(coReq)) {
+                    sortedNodes.add(0, coReq); 
+                    permanentMarks.add(coReq);
+                }
+            }
+        }
+    
         temporaryMarks.remove(node);
         permanentMarks.add(node);
-        sortedNodes.add(0, node);
-        
+        sortedNodes.add(0, node); // Add after dependencies
+    
         return true;
     }
+    
 }

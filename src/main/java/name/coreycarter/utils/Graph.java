@@ -6,6 +6,8 @@ public class Graph<T> {
 
     // We use Hashmap to store the edges in the graph
     private Map<T, List<T> > map = new HashMap<>();
+    private Map<T, List<T>> coRequisites = new HashMap<>();
+
     
 
     // This function adds a new vertex to the graph
@@ -13,24 +15,28 @@ public class Graph<T> {
     {
         map.put(s, new LinkedList<T>());
     }
+    public Map<T, List<T>> getCoRequisites() {
+        return coRequisites;
+    }
 
     // This function adds the edge
     // between source to destination
-    public void addEdge(T source, T destination,
-                        boolean bidirectional)
-    {
-
-        if (!map.containsKey(source))
-            addVertex(source);
-
-        if (!map.containsKey(destination))
-            addVertex(destination);
-
-        map.get(source).add(destination);
-        if (bidirectional == true) {
+    public void addEdge(T source, T destination, boolean bidirectional, boolean isCoReq) {
+        if (!map.containsKey(source)) addVertex(source);
+        if (!map.containsKey(destination)) addVertex(destination);
+    
+        if (isCoReq) {
+            coRequisites.putIfAbsent(source, new ArrayList<>());
+            coRequisites.get(source).add(destination);
+        } else {
+            map.get(source).add(destination);
+        }
+    
+        if (bidirectional) {
             map.get(destination).add(source);
         }
     }
+    
 
     // This function gives the count of vertices
     public void getVertexCount()
