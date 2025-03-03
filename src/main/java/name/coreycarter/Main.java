@@ -1,10 +1,12 @@
 package name.coreycarter;
 import name.coreycarter.classes.Course;
+import name.coreycarter.classes.Scheduler;
 import name.coreycarter.utils.Graph;
 
 public class Main {
     public static void main(String[] args) {
         Graph<Course> courseGraph = new Graph<>();
+        Scheduler test = new Scheduler(courseGraph);
         
         // Example Courses
         Course Math101 = new Course("Math 101");
@@ -29,6 +31,7 @@ public class Main {
         
         try {
             System.out.println("Course Order: " + courseGraph.topologicalSortM());
+            test.printSemesters();
         } catch (RuntimeException e) {
             e.printStackTrace();
             System.out.println(e.getMessage());
