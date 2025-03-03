@@ -1,7 +1,5 @@
 package name.coreycarter.classes;
 
-import java.util.List;
-
 import name.coreycarter.utils.Graph;
 
 public class Scheduler {
@@ -11,7 +9,4 @@ public class Scheduler {
         this.graph = graph;
     }
     
-    public List<Course> class_order() {
-        
-    }
 }
