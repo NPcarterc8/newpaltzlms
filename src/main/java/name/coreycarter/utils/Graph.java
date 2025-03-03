@@ -2,6 +2,8 @@ package name.coreycarter.utils;
 import java.lang.classfile.components.ClassPrinter;
 import java.util.*;
 
+import name.coreycarter.classes.Course;
+
 public class Graph<T> {
 
     // We use Hashmap to store the edges in the graph
@@ -21,7 +23,7 @@ public class Graph<T> {
 
     // This function adds the edge
     // between source to destination
-    public void addEdge(T source, T destination, boolean bidirectional, boolean isCoReq) {
+    public void addEdge(T source, T destination, boolean isCoReq) {
         if (!map.containsKey(source)) addVertex(source);
         if (!map.containsKey(destination)) addVertex(destination);
     
@@ -30,10 +32,6 @@ public class Graph<T> {
             coRequisites.get(source).add(destination);
         } else {
             map.get(source).add(destination);
-        }
-    
-        if (bidirectional) {
-            map.get(destination).add(source);
         }
     }
     
