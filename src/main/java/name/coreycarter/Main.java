@@ -11,18 +11,18 @@ public class Main {
         Scheduler test = new Scheduler(courseGraph);
 
         // Example Courses
-        Course Math101 = new Course("Math 101",true);
-        Course Math102 = new Course("Math 102",true);
-        Course Physics101 = new Course("Physics 101",true);
-        Course CS101 = new Course("CS 101",true);
-        Course CS102 = new Course("CS 102",true);
-        Course CS201 = new Course("CS 201",true);
-        Course Algorithms = new Course("Algorithms",true);
-        Course Physics102 = new Course("Physics 102",true);
-        Course Physics103 = new Course("Physics 103",true);
-        Course Lab101 = new Course("Lab 101",false);
-        Course Lab102 = new Course("Lab 102",false);
-        Course Lab103 = new Course("Lab 103",false);
+        Course Math101 = new Course("Math 101",true,3);
+        Course Math102 = new Course("Math 102",true,3);
+        Course Physics101 = new Course("Physics 101",true,3);
+        Course CS101 = new Course("CS 101",true,3);
+        Course CS102 = new Course("CS 102",true,3);
+        Course CS201 = new Course("CS 201",true,3);
+        Course Algorithms = new Course("Algorithms",true,3);
+        Course Physics102 = new Course("Physics 102",true,3);
+        Course Physics103 = new Course("Physics 103",true,3);
+        Course Lab101 = new Course("Lab 101",false,1);
+        Course Lab102 = new Course("Lab 102",false,1);
+        Course Lab103 = new Course("Lab 103",false,1);
 
         courseGraph.addEdge(Math101, Math102, false); // Math 101 → Math 102
         courseGraph.addEdge(Math101, Physics101, false); // Math 101 → Physics 101
@@ -38,7 +38,7 @@ public class Main {
 
         try {
             System.out.println("Course Order: " + courseGraph.topologicalSortM());
-            //test.printSemesters();
+            test.printSemesters();
         } catch (RuntimeException e) {
             e.printStackTrace();
             System.out.println(e.getMessage());
