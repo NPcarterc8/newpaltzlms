@@ -38,7 +38,7 @@ public class Main {
 
         try {
             System.out.println("Course Order: " + courseGraph.topologicalSortM());
-            test.printSemesters();
+            //test.printSemesters();
         } catch (RuntimeException e) {
             e.printStackTrace();
             System.out.println(e.getMessage());
