@@ -10,7 +10,7 @@ public class Scheduler {
     }
 
     public void printSemesters() {
-        System.out.println(graph);
-        //System.out.print("nsjns");
+        System.out.println(graph.getCoRequisites());
+
     }
 }

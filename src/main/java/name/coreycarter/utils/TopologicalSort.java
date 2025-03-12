@@ -35,9 +35,11 @@ private List<T> sortedNodes = new ArrayList<>();
     }
 
     private boolean visit(T node) {
+        System.out.println(node+"  1");
         if (permanentMarks.contains(node)) {
             return true;
         }
+        System.out.println(node+"  2");
         if (temporaryMarks.contains(node)) {
             return false; // Cycle detected
         }
@@ -54,16 +56,20 @@ private List<T> sortedNodes = new ArrayList<>();
         // Add co-requisites in the same batch
         if (graph.getCoRequisites().containsKey(node)) {
             for (T coReq : graph.getCoRequisites().get(node)) {
-                if (!permanentMarks.contains(coReq)) {
-                    sortedNodes.add(0, coReq); 
+                if (permanentMarks.contains(coReq)) {
+                    sortedNodes.add(coReq); 
+                    permanentMarks.add(coReq);
+                }else if(!permanentMarks.contains(coReq)){
+                    sortedNodes.add(coReq); 
                     permanentMarks.add(coReq);
                 }
             }
+            
         }
     
         temporaryMarks.remove(node);
         permanentMarks.add(node);
-        sortedNodes.add(0, node); // Add after dependencies
+        sortedNodes.add(node); // Add after dependencies
     
         return true;
     }
