@@ -15,7 +15,7 @@ public class Scheduler {
         this.graph = graph;
     }
 
-    public void printSemesters(Students info, Graph<Course> courseGraph) {
+    public void credits_squence(Students info, Graph<Course> courseGraph) {
         int class_count = 0;
         ArrayList<Course> hold = new ArrayList<>();
         ArrayList<Course> list = new ArrayList<>();
