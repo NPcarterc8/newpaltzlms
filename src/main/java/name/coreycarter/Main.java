@@ -44,6 +44,7 @@ public class Main {
             System.out.println("Course Order: " + courseGraph.topologicalSortM());
             System.out.println(test.class_credits(0, courseGraph));
             test.printSemesters(t1, courseGraph);
+            //System.out.println(courseGraph.(Physics103, Physics102));
         } catch (RuntimeException e) {
             e.printStackTrace();
             System.out.println(e.getMessage());

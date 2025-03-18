@@ -17,5 +17,6 @@ public class Semeter {
         this.term=term;
         this.courses=courses;
     }
-    //geters seters
+
+    
 }

@@ -97,6 +97,16 @@ public class Graph<T> {
         return x.topologicalSort();
     }
 
+    // This function checks if the first node is the source of the second node
+    public boolean isSourceOf(T source, T destination) {
+        return map.containsKey(source) && map.get(source).contains(destination);
+    }
+
+    // This function checks if there is an edge from source to destination
+    public boolean isDestinationof(T source, T destination) {
+        return map.containsKey(source) && map.get(source).contains(destination);
+    }
+
     // Prints the adjacency list of each vertex.
     @Override
     public String toString() {
