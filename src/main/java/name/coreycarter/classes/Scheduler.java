@@ -26,7 +26,11 @@ public class Scheduler {
                 credits += class_credits(class_count, courseGraph);
                 class_count++;
             }
-            System.out.println("Semester " + (term) + ": " + hold);
+            StringBuilder semesterOutput = new StringBuilder("Semester " + (term) + ": ");
+            for (Course course : hold) {
+                semesterOutput.append(course.getName()).append("(").append(course.getCredits()).append(") ");
+            }
+            System.out.println(semesterOutput.toString().trim());
             hold.clear();
             term++;
         }
