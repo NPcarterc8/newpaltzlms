@@ -72,19 +72,20 @@ public class Graph<T> {
         if (map.get(s).contains(d)) {
             System.out.println("The graph has an edge between " + s + " and " + d + ".");
         } else {
-            System.out.println("The graph does not contain an edge between " + s + " and " + d + ".");
+                System.out.println("The graph does not contain an edge between " + s + " and " + d + ".");
+            }
         }
-    }
+    
+        public List<T> printneighbours(T s) {
+            if (!map.containsKey(s))
+                return Collections.emptyList();
+            System.out.println("The neighbours of " + s + " are");
+            for (T w : map.get(s))
+                System.out.print(w + ",");
+            return map.get(s);
+        }
 
-    public void printneighbours(T s) {
-        if (!map.containsKey(s))
-            return;
-        System.out.println("The neighbours of " + s + " are");
-        for (T w : map.get(s))
-            System.out.print(w + ",");
-    }
-
-    public List<T> Tneighbours(T s) {
+        public List<T> Tneighbours(T s) {
         return map.getOrDefault(s, Collections.emptyList());
     }
 

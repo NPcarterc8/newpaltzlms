@@ -41,7 +41,8 @@ public class Main {
         courseGraph.addEdge(Physics103, Lab103, true); // Bidirectional → Co-Req
         
         try {
-            System.out.println(test.order_squence(courseGraph));
+            System.out.println(courseGraph.topologicalSortM());
+            System.out.println(test.credits_squence(t1,courseGraph));
         } catch (RuntimeException e) {
             e.printStackTrace();
             System.out.println(e.getMessage());

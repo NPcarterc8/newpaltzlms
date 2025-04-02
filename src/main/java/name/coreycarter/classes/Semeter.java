@@ -3,10 +3,11 @@ package name.coreycarter.classes;
 import java.util.List;
 
 public class Semeter {
+    //single semter(bulid when your done wiht it)
     final int year;
     final Term term;
     final List<Course> courses;
-    enum Term {
+    public enum Term {
         Fall,
         Winter,
         Spring,
