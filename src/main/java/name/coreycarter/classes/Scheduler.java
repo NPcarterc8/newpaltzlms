@@ -52,7 +52,9 @@ public class Scheduler {
                 class_count++;
             }
             StringBuilder semesterOutput = new StringBuilder("semeter " + (semeter) + ": ");
-            Semeter t2= new Semeter(2020, Semeter.Term.Fall, hold);
+            Semeter t2 = new Semeter(2020, Semeter.Term.Fall, hold);
+            System.out.println("this is " + t2);
+            System.out.println(t2.toString());
             for (Course course : hold) {
                 semesterOutput.append(course.getName()).append("(").append(course.getCredits()).append(") ");
             }
@@ -63,6 +65,9 @@ public class Scheduler {
     }
     public boolean take_course(Course i, List<Course> hold ,Graph<Course> courseGraph){
         //check if you take the precourse
+        // get a list of old semeret
+        //make sure all the dependes in i are in the old semeters
+        // live when it alive and when it not
         for (Course x : hold) {
             if(courseGraph.isSourceOf(x,i)){
                 System.err.println(x+"  "+i+"  "+ courseGraph.isSourceOf(x,i));

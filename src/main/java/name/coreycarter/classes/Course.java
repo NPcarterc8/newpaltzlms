@@ -14,12 +14,11 @@ public class Course {
     public String getName() {
         return name;
     }
+    
     public int getCredits() {
         return credits;
     }
 
-
-    @Override
     public String toString() {
         return name;
     }

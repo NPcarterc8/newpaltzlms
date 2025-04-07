@@ -18,6 +18,10 @@ public class Semeter {
         this.term=term;
         this.courses=courses;
     }
+    @Override
+    public String toString() {
+        return String.valueOf(year) + " " + term.name() + " " + courses;
+    }
 
     
 }
