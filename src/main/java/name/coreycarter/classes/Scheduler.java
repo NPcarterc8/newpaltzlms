@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import name.coreycarter.utils.Graph;
+import name.coreycarter.utils.Graph; // Ensure Course is imported
 
 public class Scheduler {
     private Graph<Course> graph;
@@ -21,51 +21,45 @@ public class Scheduler {
     //
 
     public List<String> credits_squence(Students info, Graph<Course> courseGraph) {
-        int class_count = 0;
+        int class_count = 0; 
         List<Course> hold = new ArrayList<>();
-        List<Course> left = new ArrayList<>();
+        List<Course> l = new ArrayList<>();
+        List<Semeter> final_semeters = new ArrayList<>();
         List<String> sequence = new ArrayList<>();
         int max = info.get_max_credits_per_semeter();
         int semeter = info.start_date();
         int totalCourses = Graph_size(courseGraph);
 
-        while (class_count < totalCourses || !left.isEmpty()) {
+        while (class_count < totalCourses || !l.isEmpty()) {
             int credits = 0;
-            List<Course> tempLeft = new ArrayList<>(left);
-            left.clear();
+            List<Course> tempLeft = new ArrayList<>(l);
+            l.clear();
 
             for (Course consider : tempLeft) {
-                if (credits < max && take_course(consider, hold, courseGraph)) {
+                if (credits < max && take_course(consider, hold, courseGraph, final_semeters)) {
                     hold.add(consider);
                     credits += consider.getCredits();
                 } else {
-                    left.add(consider);
+                    l.add(consider);
                 }
             }
-
-            // Process remaining courses if credits allow
+            
             while (credits < max && class_count < totalCourses) {
                 Course consider = courseGraph.topologicalSortM().get(class_count);
-                if (take_course(consider, hold, courseGraph)) {
+                if (take_course(consider, hold, courseGraph, final_semeters)) {
                     hold.add(consider);
                     credits += consider.getCredits();
                 } else {
-                    left.add(consider);
+                    l.add(consider);
                 }
                 class_count++;
             }
-
-            // Call the printsemeter method to handle semester output
+            Semeter t2 = new Semeter(semeter, Semeter.Term.Fall, hold);
             sequence.add(printsemeter(info, courseGraph, semeter, hold, sequence));
+            final_semeters.add(t2);
             semeter++;
 
-            // Clear the hold list for the next semester
             hold.clear();
-
-            // Break the loop if no progress is made to avoid infinite loop
-            if (credits == 0 && left.isEmpty()) {
-                break;
-            }
         }
 
         return sequence;
@@ -86,14 +80,25 @@ public class Scheduler {
         }
         return semesterOutput.toString();
     }
-    public boolean take_course(Course i, List<Course> hold ,Graph<Course> courseGraph){
-        //check if you take the precourse
-        //get a list of old semeret
-        //make sure all the dependes in i are in the old semeters
-        //live when it alive and when it not
-        for (Course x : hold) {
-            if(courseGraph.isSourceOf(x,i)){
-                System.err.println(x+"  "+i+"  "+ courseGraph.isSourceOf(x,i));
+//     let deps = all courses that i depends on
+// for dep in deps:
+//     if dep is not in one of final_semester:
+//          return false
+
+// return tru
+// e
+    public boolean take_course(Course i, List<Course> hold ,Graph<Course> courseGraph, List<Semeter> final_Semeters){
+        List<Course> deps_list = courseGraph.getIncomingEdges(i);
+        for (Course dep : deps_list) {
+            if(check(dep, final_Semeters)){
+                return false;
+            }
+        }
+        return true;
+    }
+    public boolean check(Course dep,List<Semeter> final_Semeters) {
+        for (Semeter semeter : final_Semeters) {
+            if (semeter.courses.contains(dep)) {
                 return false;
             }
         }

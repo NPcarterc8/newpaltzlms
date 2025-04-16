@@ -53,19 +53,19 @@ private List<T> sortedNodes = new ArrayList<>();
             }
         }
     
-        // Add co-requisites in the same batch
-        if (graph.getCoRequisites().containsKey(node)) {
-            for (T coReq : graph.getCoRequisites().get(node)) {
-                if (permanentMarks.contains(coReq)) {
-                    sortedNodes.add(0,coReq); 
-                    permanentMarks.add(coReq);
-                }else if(!permanentMarks.contains(coReq)){
-                    sortedNodes.add(0,coReq); 
-                    permanentMarks.add(coReq);
-                }
-            }
+        // // Add co-requisites in the same batch
+        // if (graph.getCoRequisites().containsKey(node)) {
+        //     for (T coReq : graph.getCoRequisites().get(node)) {
+        //         if (permanentMarks.contains(coReq)) {
+        //             sortedNodes.add(0,coReq); 
+        //             permanentMarks.add(coReq);
+        //         }else if(!permanentMarks.contains(coReq)){
+        //             sortedNodes.add(0,coReq); 
+        //             permanentMarks.add(coReq);
+        //         }
+        //     }
             
-        }
+        // }
     
         temporaryMarks.remove(node);
         permanentMarks.add(node);

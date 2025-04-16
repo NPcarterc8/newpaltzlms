@@ -28,6 +28,7 @@ public class Main {
         Course Lab103 = new Course("Lab 103",false,1);
 
         courseGraph.addEdge(Math101, Math102, false); // Math 101 → Math 102
+        courseGraph.addEdge(CS201, Physics101, false); // Math 101 → Math 102
         courseGraph.addEdge(Math101, Physics101, false); // Math 101 → Physics 101
         courseGraph.addEdge(CS101, CS102, false); // CS 101 → CS 102
         courseGraph.addEdge(CS102, CS201, false); // CS 102 → CS 201
@@ -41,7 +42,7 @@ public class Main {
         courseGraph.addEdge(Physics103, Lab103, true); // Bidirectional → Co-Req
         
         try {
-            System.out.println(courseGraph.topologicalSortM());
+            System.out.println("fjhbfjkidsa" +courseGraph.getIncomingEdges(Physics101));
             System.out.println(test.credits_squence(t1,courseGraph));
         } catch (RuntimeException e) {
             e.printStackTrace();
