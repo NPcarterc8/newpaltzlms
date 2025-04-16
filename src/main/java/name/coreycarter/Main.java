@@ -11,7 +11,7 @@ public class Main {
         
         Graph<Course> courseGraph = new Graph<>();
         Scheduler test = new Scheduler(courseGraph);
-        Students t1 = new Students("test", "computer science", "Student", 15);
+        Students t1 = new Students("test", "computer science", "Student", 15, 2020);
         
         // Example Courses
         Course Math101 = new Course("Math 101",true,3);

@@ -107,6 +107,18 @@ public class Graph<T> {
     public boolean isDestinationof(T source, T destination) {
         return map.containsKey(source) && map.get(source).contains(destination);
     }
+    // Existing methods in the Graph class
+
+// Method to get incoming edges for a given node
+public List<T> getIncomingEdges(T node) {
+    List<T> incomingEdges = new ArrayList<>();
+    for (Map.Entry<T, List<T>> entry : map.entrySet()) {
+        if (entry.getValue().contains(node)) {
+            incomingEdges.add(entry.getKey());
+        }
+    }
+    return incomingEdges;
+}
 
     // Prints the adjacency list of each vertex.
     @Override
