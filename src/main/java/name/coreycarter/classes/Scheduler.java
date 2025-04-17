@@ -1,17 +1,15 @@
 package name.coreycarter.classes;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import name.coreycarter.utils.Graph; // Ensure Course is imported
+import name.coreycarter.utils.Graph;
 
 public class Scheduler {
-    private Graph<Course> graph;
-    private Map<Course, List<Course>> map = new HashMap<>();
+    //private Graph<Course> graph;
+    //private Map<Course, List<Course>> map = new HashMap<>();
 
     public Scheduler(Graph<Course> graph) {
-        this.graph = graph;
+        //this.graph = graph;
     }
     // if the cvlass is not listed oit go intop leftovers
     // from thiere the semter is printed
@@ -20,23 +18,23 @@ public class Scheduler {
     //illrater java for this class
     //
 
-    public List<String> credits_squence(Students info, Graph<Course> courseGraph) {
+    public List<String> credits_sequence(Students info, Graph<Course> courseGraph) {
         int class_count = 0; 
         List<Course> hold = new ArrayList<>();
         List<Course> l = new ArrayList<>();
-        List<Semeter> final_semeters = new ArrayList<>();
+        List<Semeter> final_semesters = new ArrayList<>();
         List<String> sequence = new ArrayList<>();
         int max = info.get_max_credits_per_semeter();
-        int semeter = info.start_date();
+        int semester = info.start_date();
         int totalCourses = Graph_size(courseGraph);
 
-        while (class_count < totalCourses || !l.isEmpty()) {
+        while (class_count < totalCourses || (!l.isEmpty() && class_count < totalCourses)) {
             int credits = 0;
             List<Course> tempLeft = new ArrayList<>(l);
             l.clear();
 
             for (Course consider : tempLeft) {
-                if (credits < max && take_course(consider, hold, courseGraph, final_semeters)) {
+                if (credits < max && take_course(consider, hold, courseGraph, final_semesters)) {
                     hold.add(consider);
                     credits += consider.getCredits();
                 } else {
@@ -46,7 +44,7 @@ public class Scheduler {
             
             while (credits < max && class_count < totalCourses) {
                 Course consider = courseGraph.topologicalSortM().get(class_count);
-                if (take_course(consider, hold, courseGraph, final_semeters)) {
+                if (take_course(consider, hold, courseGraph, final_semesters)) {
                     hold.add(consider);
                     credits += consider.getCredits();
                 } else {
@@ -54,25 +52,25 @@ public class Scheduler {
                 }
                 class_count++;
             }
-            Semeter t2 = new Semeter(semeter, Semeter.Term.Fall, hold);
-            sequence.add(printsemeter(info, courseGraph, semeter, hold, sequence));
-            final_semeters.add(t2);
-            semeter++;
+            Semeter t2 = new Semeter(semester, Semeter.Term.Fall, hold);
+            sequence.add(printSemester(info, courseGraph, semester, hold, sequence));
+            final_semesters.add(t2);
+            semester++;
 
             hold.clear();
         }
 
         return sequence;
     }
-    public List<String> order_squence(List<String> x, Graph<Course> courseGraph) {
+    public List<String> order_sequence(List<String> x, Graph<Course> courseGraph) {
         List<String> sequence = new ArrayList<>();
 
         return sequence;
     }
 
-    public String printsemeter(Students info, Graph<Course> courseGraph, int semeter, List<Course> hold, List<String> sequence) {
-        StringBuilder semesterOutput = new StringBuilder("semeter " + semeter + ": ");
-        Semeter t2 = new Semeter(semeter, Semeter.Term.Fall, hold);
+    public String printSemester(Students info, Graph<Course> courseGraph, int semester, List<Course> hold, List<String> sequence) {
+        StringBuilder semesterOutput = new StringBuilder("semester " + semester + ": ");
+        Semeter t2 = new Semeter(semester, Semeter.Term.Fall, hold);
         System.out.println("this is " + t2);
         System.out.println(t2.toString());
         for (Course course : hold) {
@@ -87,18 +85,18 @@ public class Scheduler {
 
 // return tru
 // e
-    public boolean take_course(Course i, List<Course> hold ,Graph<Course> courseGraph, List<Semeter> final_Semeters){
+    public boolean take_course(Course i, List<Course> hold ,Graph<Course> courseGraph, List<Semeter> final_semesters){
         List<Course> deps_list = courseGraph.getIncomingEdges(i);
         for (Course dep : deps_list) {
-            if(check(dep, final_Semeters)){
+            if(check(dep, final_semesters)){
                 return false;
             }
         }
         return true;
     }
-    public boolean check(Course dep,List<Semeter> final_Semeters) {
-        for (Semeter semeter : final_Semeters) {
-            if (semeter.courses.contains(dep)) {
+    public boolean check(Course dep,List<Semeter> final_semesters) {
+        for (Semeter semester : final_semesters) {
+            if (semester.courses.contains(dep)) {
                 return false;
             }
         }

@@ -42,8 +42,8 @@ public class Main {
         courseGraph.addEdge(Physics103, Lab103, true); // Bidirectional → Co-Req
         
         try {
-            System.out.println("fjhbfjkidsa" +courseGraph.getIncomingEdges(Physics101));
-            System.out.println(test.credits_squence(t1,courseGraph));
+            //System.out.println("fjhbfjkidsa" +courseGraph.getIncomingEdges(Physics101));
+            System.out.println(test.credits_sequence(t1,courseGraph));
         } catch (RuntimeException e) {
             e.printStackTrace();
             System.out.println(e.getMessage());
