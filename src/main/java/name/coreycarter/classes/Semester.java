@@ -2,7 +2,7 @@ package name.coreycarter.classes;
 
 import java.util.List;
 
-public class Semeter {
+public class Semester {
     //single semter(bulid when your done wiht it)
     final int year;
     final Term term;
@@ -13,7 +13,7 @@ public class Semeter {
         Spring,
         Summer 
     }
-    public Semeter(int year,Term term,List<Course> courses){
+    public Semester(int year,Term term,List<Course> courses){
         this.year=year;
         this.term=term;
         this.courses=courses;
