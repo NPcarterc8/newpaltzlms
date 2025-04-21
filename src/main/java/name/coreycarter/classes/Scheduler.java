@@ -10,12 +10,12 @@ public class Scheduler {
         // Constructor
     }
 
-    public List<String> credits_sequence(Students info, Graph<Course> courseGraph) {
+    public List<Semester> credits_sequence(Students info, Graph<Course> courseGraph) {
         int class_count = 0; 
         List<Course> hold = new ArrayList<>();
         List<Course> l = new ArrayList<>();
-        List<Semester> final_semesters = new ArrayList<>();
-        List<String> sequence = new ArrayList<>();
+        //List<Semester> final_semesters = new ArrayList<>();
+        List<Semester> sequence = new ArrayList<>();
         int max = info.get_max_credits_per_semeter();
         int semester = info.start_date();
         int totalCourses = Graph_size(courseGraph);
@@ -37,7 +37,7 @@ public class Scheduler {
             // Process courses left from the previous iteration
             for (Course consider : tempLeft) {
                 System.out.println("Considering leftover course: " + consider.getName());
-                if (credits < max && take_course(consider, hold, courseGraph, final_semesters)) {
+                if (credits < max && take_course(consider, hold, courseGraph, sequence)) {
                     hold.add(consider);
                     credits += consider.getCredits();
                     progressMade = true;
@@ -52,7 +52,7 @@ public class Scheduler {
             while (credits < max && class_count < totalCourses) {
                 Course consider = courseGraph.topologicalSortM().get(class_count);
                 System.out.println("Considering new course: " + consider.getName());
-                if (take_course(consider, hold, courseGraph, final_semesters)) {
+                if (take_course(consider, hold, courseGraph, sequence)) {
                     hold.add(consider);
                     credits += consider.getCredits();
                     progressMade = true;
@@ -71,8 +71,7 @@ public class Scheduler {
 
             Semester t2 = new Semester(semester, Semester.Term.Fall, hold);
             System.out.println("Scheduled semester: " + semester + " with courses: " + hold);
-            sequence.add(printSemester(info, courseGraph, semester, hold, sequence));
-            final_semesters.add(t2);
+            sequence.add(t2);
             semester++;
 
             hold.clear();
@@ -81,7 +80,7 @@ public class Scheduler {
         return sequence;
     }
 
-    public String printSemester(Students info, Graph<Course> courseGraph, int semester, List<Course> hold, List<String> sequence) {
+    public String printSemester(Students info, Graph<Course> courseGraph, int semester, List<Course> hold, List<Semester> sequence) {
         StringBuilder semesterOutput = new StringBuilder("semester " + semester + ": ");
         Semester t2 = new Semester(semester, Semester.Term.Fall, hold);
         System.out.println("Printing semester: " + t2);
@@ -101,13 +100,13 @@ public class Scheduler {
             }
         }
         System.out.println("Course can be taken: " + i.getName());
-        // Ensure this return statement is inside a valid method or block
-        // Example: If it belongs to the `take_course` method, ensure proper placement
-                return true;
+        return true;
     }
 
     public boolean check(Course dep, List<Semester> final_semesters) {
+        System.out.println("Checking dependency: " + dep.getName());
         for (Semester semester : final_semesters) {
+            System.out.println("Checking in semester: " + semester);
             if (semester.courses.contains(dep)) {
                 System.out.println("Dependency satisfied: " + dep.getName());
                 return false;
