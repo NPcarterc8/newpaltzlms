@@ -13,8 +13,8 @@ public class Scheduler {
     public List<Semester> credits_sequence(Students info, Graph<Course> courseGraph) {
         int class_count = 0; 
         List<Course> hold = new ArrayList<>();
+        List<Semester> old_semester = new ArrayList<>();
         List<Course> l = new ArrayList<>();
-        //List<Semester> final_semesters = new ArrayList<>();
         List<Semester> sequence = new ArrayList<>();
         int max = info.get_max_credits_per_semeter();
         int semester = info.start_date();
@@ -37,7 +37,7 @@ public class Scheduler {
             // Process courses left from the previous iteration
             for (Course consider : tempLeft) {
                 System.out.println("Considering leftover course: " + consider.getName());
-                if (credits < max && take_course(consider, hold, courseGraph, sequence)) {
+                if (credits < max && take_course(consider, hold, courseGraph, old_semester)) {
                     hold.add(consider);
                     credits += consider.getCredits();
                     progressMade = true;
@@ -52,7 +52,7 @@ public class Scheduler {
             while (credits < max && class_count < totalCourses) {
                 Course consider = courseGraph.topologicalSortM().get(class_count);
                 System.out.println("Considering new course: " + consider.getName());
-                if (take_course(consider, hold, courseGraph, sequence)) {
+                if (take_course(consider, hold, courseGraph, old_semester)) {
                     hold.add(consider);
                     credits += consider.getCredits();
                     progressMade = true;
@@ -68,6 +68,16 @@ public class Scheduler {
                 System.err.println("Infinite loop detected: Unable to schedule remaining courses.");
                 throw new IllegalStateException("Infinite loop detected: Unable to schedule remaining courses.");
             }
+
+            // Use old_semester for guidance
+            System.out.println("Using old_semester for guidance...");
+            for (Semester pastSemester : old_semester) {
+                System.out.println("Past semester: " + pastSemester);
+            }
+
+            // Update old_semester with the current hold before clearing it
+            old_semester.add(new Semester(semester, Semester.Term.Fall, new ArrayList<>(hold)));
+            System.out.println("Old semester contents updated with current hold: " + old_semester);
 
             Semester t2 = new Semester(semester, Semester.Term.Fall, hold);
             System.out.println("Scheduled semester: " + semester + " with courses: " + hold);
