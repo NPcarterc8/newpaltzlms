@@ -144,5 +144,11 @@ public List<T> getIncomingEdges(T node) {
 
         return builder.toString();
     }
-
+    public List<T> getOutgoingEdges(T node) {
+        List<T> outgoingEdges = new ArrayList<>();
+        if (map.containsKey(node)) {
+            outgoingEdges.addAll(map.get(node));
+        }
+        return outgoingEdges;
+    }
 }

@@ -5,89 +5,101 @@ import java.util.List;
 import name.coreycarter.utils.Graph;
 
 public class Scheduler {
-
+    public int class_count = 0;
     public Scheduler(Graph<Course> graph) {
         // Constructor
     }
 
     public List<Semester> credits_sequence(Students info, Graph<Course> courseGraph) {
-        int class_count = 0; 
         List<Course> hold = new ArrayList<>();
         List<Semester> old_semester = new ArrayList<>();
-        List<Course> l = new ArrayList<>();
+        List<Course> unscheduledCourses = new ArrayList<>();
         List<Semester> sequence = new ArrayList<>();
-        int max = info.get_max_credits_per_semeter();
+        int maxCredits = info.get_max_credits_per_semeter();
         int semester = info.start_date();
         int totalCourses = Graph_size(courseGraph);
 
         System.out.println("Starting credits_sequence method...");
-        System.out.println("Max credits per semester: " + max);
+        System.out.println("Max credits per semester: " + maxCredits);
         System.out.println("Total courses to schedule: " + totalCourses);
 
-        while (class_count < totalCourses || !l.isEmpty()) { // Process until all courses are scheduled
+        while (class_count < totalCourses || !unscheduledCourses.isEmpty()) {
             System.out.println("Starting new semester...");
             System.out.println("Current class count: " + class_count);
-            System.out.println("Courses left to process: " + l);
+            System.out.println("Courses left to process: " + unscheduledCourses);
 
             int credits = 0;
-            List<Course> tempLeft = new ArrayList<>(l);
-            l.clear();
-            boolean progressMade = false;
+            unscheduledCourses = processUnscheduledCourses(unscheduledCourses, hold, courseGraph, old_semester, maxCredits, credits);
 
-            // Process courses left from the previous iteration
-            for (Course consider : tempLeft) {
-                System.out.println("Considering leftover course: " + consider.getName());
-                if (credits < max && take_course(consider, hold, courseGraph, old_semester)) {
-                    hold.add(consider);
-                    credits += consider.getCredits();
-                    progressMade = true;
-                    System.out.println("Added course to hold: " + consider.getName());
-                } else {
-                    l.add(consider); // Add back if it can't be scheduled
-                    System.out.println("Course cannot be scheduled yet: " + consider.getName());
-                }
-            }
+            credits = processNewCourses(unscheduledCourses,totalCourses, courseGraph, hold, old_semester, maxCredits, credits);
+            //class_count += hold.size();
 
-            // Process new courses from the topological sort
-            while (credits < max && class_count < totalCourses) {
-                Course consider = courseGraph.topologicalSortM().get(class_count);
-                System.out.println("Considering new course: " + consider.getName());
-                if (take_course(consider, hold, courseGraph, old_semester)) {
-                    hold.add(consider);
-                    credits += consider.getCredits();
-                    progressMade = true;
-                    System.out.println("Added course to hold: " + consider.getName());
-                } else {
-                    l.add(consider); // Add to the list of unscheduled courses
-                    System.out.println("Course cannot be scheduled yet: " + consider.getName());
-                }
-                class_count++;
-            }
+            // if (credits == 0 && unscheduledCourses.isEmpty()) {
+            //     System.err.println("Infinite loop detected: Unable to schedule remaining courses.");
+            //     throw new IllegalStateException("Infinite loop detected: Unable to schedule remaining courses.");
+            // }
 
-            if (!progressMade) {
-                System.err.println("Infinite loop detected: Unable to schedule remaining courses.");
-                throw new IllegalStateException("Infinite loop detected: Unable to schedule remaining courses.");
-            }
-
-            // Use old_semester for guidance
-            System.out.println("Using old_semester for guidance...");
-            for (Semester pastSemester : old_semester) {
-                System.out.println("Past semester: " + pastSemester);
-            }
-
-            // Update old_semester with the current hold before clearing it
-            old_semester.add(new Semester(semester, Semester.Term.Fall, new ArrayList<>(hold)));
-            System.out.println("Old semester contents updated with current hold: " + old_semester);
-
-            Semester t2 = new Semester(semester, Semester.Term.Fall, hold);
-            System.out.println("Scheduled semester: " + semester + " with courses: " + hold);
-            sequence.add(t2);
+            updateOldSemester(old_semester, semester, hold);
+            sequence.add(new Semester(semester, Semester.Term.Fall, new ArrayList<>(hold)));
             semester++;
-
             hold.clear();
+            System.out.println("ECurrent class count: " + class_count);
+            System.out.println("ECourses left to process: " + unscheduledCourses);
         }
+        
         System.out.println("Finished scheduling all courses.");
         return sequence;
+    }
+
+    private List<Course> processUnscheduledCourses(List<Course> unscheduledCourses, List<Course> hold, Graph<Course> courseGraph, List<Semester> old_semester, int maxCredits, int credits) {
+        List<Course> tempLeft = new ArrayList<>(unscheduledCourses);
+        unscheduledCourses.clear();
+
+        for (Course course : tempLeft) {
+            System.out.println("Considering leftover course: " + course.getName());
+            if (credits < maxCredits && take_course(course, hold, courseGraph, old_semester)) {
+                hold.add(course);
+                credits += course.getCredits();
+                System.out.println("Added course to hold: " + course.getName());
+                if(course.getLab()!=null){
+                    hold.add(course.getLab());
+                    credits += course.getLab().getCredits();
+                    System.out.println("LAdded course to hold: " + course.getLab().getName());
+                }
+            } else {
+                unscheduledCourses.add(course);
+                System.out.println("Course cannot be scheduled yet: " + course.getName());
+            }
+        }
+        return unscheduledCourses;
+    }
+
+    private int processNewCourses(List<Course> unscheduledCourses ,int totalCourses, Graph<Course> courseGraph, List<Course> hold, List<Semester> old_semester, int maxCredits, int credits) {
+        
+        while (credits < maxCredits && class_count < totalCourses) {
+            Course course = courseGraph.topologicalSortM().get(class_count);
+            System.out.println("Considering new course: " + course.getName());
+            if (take_course(course, hold, courseGraph, old_semester)) {
+                hold.add(course);
+                credits += course.getCredits();
+                System.out.println("Added course to hold: " + course.getName());
+                if(course.getLab()!=null){
+                    hold.add(course.getLab());
+                    credits += course.getLab().getCredits();
+                    System.out.println("xAdded course to hold: " + course.getLab().getName());
+                }
+            } else {
+                unscheduledCourses.add(course);
+                System.out.println("Course cannot be scheduled yet: " + course.getName());
+            }
+            class_count++;
+        }
+        return credits;
+    }
+
+    private void updateOldSemester(List<Semester> old_semester, int semester, List<Course> hold) {
+        old_semester.add(new Semester(semester, Semester.Term.Fall, new ArrayList<>(hold)));
+        System.out.println("Old semester contents updated with current hold: " + old_semester);
     }
 
     public String printSemester(Students info, Graph<Course> courseGraph, int semester, List<Course> hold, List<Semester> sequence) {
@@ -137,5 +149,19 @@ public class Scheduler {
         int size = courseGraph.topologicalSortM().size();
         System.out.println("Graph size: " + size);
         return size;
+    }
+
+    public boolean hasBidirectionalDependency(Course course, Graph<Course> courseGraph) {
+        System.out.println("Checking for bidirectional dependencies for course: " + course.getName());
+        List<Course> outgoingEdges = courseGraph.getOutgoingEdges(course);
+        for (Course outgoing : outgoingEdges) {
+            List<Course> incomingEdges = courseGraph.getIncomingEdges(outgoing);
+            if (incomingEdges.contains(course)) {
+                System.out.println("Bidirectional dependency found between " + course.getName() + " and " + outgoing.getName());
+                return true;
+            }
+        }
+        System.out.println("No bidirectional dependencies found for course: " + course.getName());
+        return false;
     }
 }
