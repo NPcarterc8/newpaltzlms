@@ -43,8 +43,8 @@ public class Main {
         
         try {
             System.out.println(test.sequence(t1,courseGraph));
-            System.out.println(test.checkTimeConflicts(test.sequence(t1, courseGraph)));
-            System.out.println(test.time_conflict(Math101, CS101));
+            //System.out.println(test.checkTimeConflicts(test.sequence(t1, courseGraph)));
+            //System.out.println(test.time_conflict(Math101, CS101));
         } catch (RuntimeException e) {
             e.printStackTrace();
             System.out.println(e.getMessage());

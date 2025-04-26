@@ -42,6 +42,7 @@ public class Scheduler {
                 Course course1 = tempHold.get(i);
                 for (int j = i + 1; j < tempHold.size(); j++) {
                     Course course2 = tempHold.get(j);
+                    System.out.println("Checking time conflict between " + course1.getName() + " (Start: " + course1.getstart_time() + ", End: " + course1.getend_time() + ") and " + course2.getName() + " (Start: " + course2.getstart_time() + ", End: " + course2.getend_time() + ").");
                     if (time_conflict(course1, course2)) {
                         System.out.println("Time conflict detected between " + course1.getName() + " and " + course2.getName() + ". Removing " + course2.getName() + " from hold.");
                         hold.remove(course2);
@@ -118,7 +119,14 @@ public class Scheduler {
         Semester t2 = new Semester(semester, Semester.Term.Fall, hold);
         System.out.println("Printing semester: " + t2);
         for (Course course : hold) {
-            semesterOutput.append(course.getName()).append("(").append(course.getCredits()).append(") ");
+            String time = class_time(course);
+            String startTime = course.getstart_time();
+            String endTime = course.getend_time();
+            semesterOutput.append(course.getName())
+                          .append("(").append(course.getCredits()).append(" credits, ")
+                          .append("Start: ").append(startTime).append(", ")
+                          .append("End: ").append(endTime).append(", ")
+                          .append(time).append(") ");
         }
         return semesterOutput.toString();
     }

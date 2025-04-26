@@ -22,7 +22,17 @@ public class Semester {
         return courses;
     }
     public String toString() {
-        return String.valueOf(year) + " " + term.name() + " " + courses;
+        StringBuilder sb = new StringBuilder();
+        sb.append(year).append(" ").append(term.name()).append(":\n");
+        for (Course course : courses) {
+            sb.append(course.getName())
+              .append(" (")
+              .append(course.getstart_time())
+              .append(" - ")
+              .append(course.getend_time())
+              .append(")\n");
+        }
+        return sb.toString();
     }
 
     
