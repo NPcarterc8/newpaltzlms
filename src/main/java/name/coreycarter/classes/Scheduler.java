@@ -123,10 +123,10 @@ public class Scheduler {
             String startTime = course.getstart_time();
             String endTime = course.getend_time();
             semesterOutput.append(course.getName())
-                          .append("(").append(course.getCredits()).append(" credits, ")
-                          .append("Start: ").append(startTime).append(", ")
-                          .append("End: ").append(endTime).append(", ")
-                          .append(time).append(") ");
+                    .append("(").append(course.getCredits()).append(" credits, ")
+                    .append("Start: ").append(startTime).append(", ")
+                    .append("End: ").append(endTime).append(", ")
+                    .append(time).append(") ");
         }
         return semesterOutput.toString();
     }

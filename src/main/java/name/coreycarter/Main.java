@@ -8,11 +8,11 @@ import name.coreycarter.utils.Graph;
 public class Main {
 
     public static void main(String[] args) {
-        
+
         Graph<Course> courseGraph = new Graph<>();
         Scheduler test = new Scheduler(courseGraph);
         Students t1 = new Students("test", "computer science", "Student", 15, 2020);
-        
+
         // Example Courses
         Course Math101 = new Course("Math 101", true, 3, "08:00", "09:30");
         Course Math102 = new Course("Math 102", true, 3, "10:00", "11:30");
@@ -35,14 +35,14 @@ public class Main {
         courseGraph.addEdge(CS102, Algorithms, false); // CS 102 → Algorithms
         courseGraph.addEdge(Physics101, Physics102, false); // Physics 101 → Physics 102
         courseGraph.addEdge(Physics102, Physics103, false);
-        
+
         // Co-requisite: Take "Lab 101" and "Physics 101" together
         courseGraph.addEdge(Physics101, Lab101, true); // Bidirectional → Co-Req
         courseGraph.addEdge(Physics102, Lab102, true); // Bidirectional → Co-Req
         courseGraph.addEdge(Physics103, Lab103, true); // Bidirectional → Co-Req
-        
+
         try {
-            System.out.println(test.sequence(t1,courseGraph));
+            System.out.println(test.sequence(t1, courseGraph));
             //System.out.println(test.checkTimeConflicts(test.sequence(t1, courseGraph)));
             //System.out.println(test.time_conflict(Math101, CS101));
         } catch (RuntimeException e) {
