@@ -1,10 +1,10 @@
 name\coreycarter\utils\TopologicalSort.class
 name\coreycarter\classes\Course.class
-name\coreycarter\classes\Semeter.class
+name\coreycarter\classes\Semester.class
 name\coreycarter\Connections\dbconn.class
 name\coreycarter\Main.class
 name\coreycarter\classes\Scheduler.class
 name\coreycarter\classes\Students.class
 name\coreycarter\utils\Graph.class
-name\coreycarter\classes\Semeter$Term.class
+name\coreycarter\classes\Semester$Term.class
 name\coreycarter\Connections\password.class

@@ -32,12 +32,6 @@ public class Scheduler {
             unscheduledCourses = processUnscheduledCourses(unscheduledCourses, hold, courseGraph, old_semester, maxCredits, credits);
 
             credits = processNewCourses(unscheduledCourses,totalCourses, courseGraph, hold, old_semester, maxCredits, credits);
-            //class_count += hold.size();
-
-            // if (credits == 0 && unscheduledCourses.isEmpty()) {
-            //     System.err.println("Infinite loop detected: Unable to schedule remaining courses.");
-            //     throw new IllegalStateException("Infinite loop detected: Unable to schedule remaining courses.");
-            // }
 
             updateOldSemester(old_semester, semester, hold);
             sequence.add(new Semester(semester, Semester.Term.Fall, new ArrayList<>(hold)));
@@ -163,5 +157,22 @@ public class Scheduler {
         }
         System.out.println("No bidirectional dependencies found for course: " + course.getName());
         return false;
+    }
+    public int[] class_time(Course course) {
+        System.out.println("Calculating class time for course: " + course.getName());
+        int startTime = course.getstartTime(); // Assuming start_time is in minutes since midnight
+        int endTime = course.getendTime(); // Assuming end_time is in minutes since midnight
+        int totalMinutes = endTime - startTime;
+
+        if (totalMinutes < 0) {
+            System.out.println("Invalid time range for course: " + course.getName());
+            return new int[]{0, 0}; // Return 0 hours and 0 minutes if time range is invalid
+        }
+
+        int hours = totalMinutes / 60;
+        int minutes = totalMinutes % 60;
+
+        System.out.println("Class time for course " + course.getName() + ": " + hours + " hours and " + minutes + " minutes");
+        return new int[]{hours, minutes};
     }
 }
