@@ -14,18 +14,18 @@ public class Main {
         Students t1 = new Students("test", "computer science", "Student", 15, 2020);
 
         // Example Courses
-        Course Math101 = new Course("Math 101", true, 3, "08:00", "09:30");
-        Course Math102 = new Course("Math 102", true, 3, "10:00", "11:30");
-        Course CS101 = new Course("CS 101", true, 3, "08:00", "09:30");
-        Course CS102 = new Course("CS 102", true, 3, "14:00", "15:30");
-        Course CS201 = new Course("CS 201", true, 3, "16:00", "17:30");
-        Course Algorithms = new Course("Algorithms", true, 3, "18:00", "19:30");
-        Course Lab101 = new Course("Lab 101", false, 3, "09:00", "10:30");
-        Course Lab102 = new Course("Lab 102", false, 1, "11:00", "12:30");
-        Course Lab103 = new Course("Lab 103", false, 1, "13:00", "14:30");
-        Course Physics101 = new Course("Physics 101", true, 3, "15:00", "16:30", Lab101);
-        Course Physics102 = new Course("Physics 102", true, 3, "17:00", "18:30", Lab102);
-        Course Physics103 = new Course("Physics 103", true, 3, "19:00", "20:30", Lab103);
+        Course Math101 = new Course("Math 101","a", true, 3, "08:00", "09:30");
+        Course Math102 = new Course("Math 102", "a", true, 3, "10:00", "11:30");
+        Course CS101 = new Course("CS 101",  "a", true, 3, "08:00", "09:30");
+        Course CS102 = new Course("CS 102",  "a", true, 3, "14:00", "15:30");
+        Course CS201 = new Course("CS 201",  "a", true, 3, "16:00", "17:30");
+        Course Algorithms = new Course("Algorithms",  "a", true, 3, "18:00", "19:30");
+        Course Lab101 = new Course("Lab 101",  "a", false, 3, "09:00", "10:30");
+        Course Lab102 = new Course("Lab 102",  "a", false, 1, "11:00", "12:30");
+        Course Lab103 = new Course("Lab 103",  "a", false, 1, "13:00", "14:30");
+        Course Physics101 = new Course("Physics 101",  "a", true, 3, "15:00", "16:30", Lab101);
+        Course Physics102 = new Course("Physics 102",  "a", true, 3, "17:00", "18:30", Lab102);
+        Course Physics103 = new Course("Physics 103",  "a", true, 16, "19:00", "20:30", Lab103);
 
         courseGraph.addEdge(Math101, Math102, false); // Math 101 → Math 102
         courseGraph.addEdge(CS201, Physics101, false); // Math 101 → Math 102
