@@ -36,7 +36,7 @@ public class Scheduler {
 
             credits = processNewCourses(unscheduledCourses, totalCourses, courseGraph, hold, old_semester, maxCredits, credits);
 
-            // Check for time conflicts before finalizing the semester
+            // Check for time and weekday conflicts before finalizing the semester
             List<Course> tempHold = new ArrayList<>(hold);
             for (int i = 0; i < tempHold.size(); i++) {
                 Course course1 = tempHold.get(i);
@@ -281,6 +281,16 @@ public class Scheduler {
         }
         System.out.println("Finished checking for time conflicts. No conflicts found.");
         return false; // No conflicts found
+    }
+    public List<String> getDays(List<Course> courses) {
+        System.out.println("Getting days for the list of courses...");
+        List<String> days = new ArrayList<>();
+        for (Course course : courses) {
+            System.out.println("Processing course: " + course.getName());
+            days.addAll(course.getWeekdays());
+        }
+        System.out.println("Days retrieved: " + days);
+        return days;
     }
 
 }
