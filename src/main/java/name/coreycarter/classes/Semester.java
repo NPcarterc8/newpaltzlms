@@ -32,9 +32,11 @@ public class Semester {
         for (Course course : courses) {
             sb.append(course.getName())
                     .append(" (")
-                    .append(course.getstart_time())
+                    .append(course.getStartTime())
                     .append(" - ")
-                    .append(course.getend_time())
+                    .append(course.getEndTime())
+                    .append(", ")
+                    .append(course.getWeekdays())
                     .append(")\n");
         }
         return sb.toString();

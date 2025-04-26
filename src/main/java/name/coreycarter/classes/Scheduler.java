@@ -42,7 +42,7 @@ public class Scheduler {
                 Course course1 = tempHold.get(i);
                 for (int j = i + 1; j < tempHold.size(); j++) {
                     Course course2 = tempHold.get(j);
-                    System.out.println("Checking time conflict between " + course1.getName() + " (Start: " + course1.getstart_time() + ", End: " + course1.getend_time() + ") and " + course2.getName() + " (Start: " + course2.getstart_time() + ", End: " + course2.getend_time() + ").");
+                    System.out.println("Checking time conflict between " + course1.getName() + " (Start: " + course1.getStartTime() + ", End: " + course1.getEndTime() + ") and " + course2.getName() + " (Start: " + course2.getStartTime() + ", End: " + course2.getEndTime() + ").");
                     if (time_conflict(course1, course2)) {
                         System.out.println("Time conflict detected between " + course1.getName() + " and " + course2.getName() + ". Removing " + course2.getName() + " from hold.");
                         hold.remove(course2);
@@ -120,8 +120,8 @@ public class Scheduler {
         System.out.println("Printing semester: " + t2);
         for (Course course : hold) {
             String time = class_time(course);
-            String startTime = course.getstart_time();
-            String endTime = course.getend_time();
+            String startTime = course.getStartTime();
+            String endTime = course.getEndTime();
             semesterOutput.append(course.getName())
                     .append("(").append(course.getCredits()).append(" credits, ")
                     .append("Start: ").append(startTime).append(", ")
@@ -187,8 +187,8 @@ public class Scheduler {
     public String class_time(Course course) {
         System.out.println("Calculating class time for course: " + course.getName());
         try {
-            String startTimeStr = course.getstart_time();
-            String endTimeStr = course.getend_time();
+            String startTimeStr = course.getStartTime();
+            String endTimeStr = course.getEndTime();
 
             if (!isValidTimeFormat(startTimeStr) || !isValidTimeFormat(endTimeStr)) {
                 System.out.println("Invalid time format for course: " + course.getName());
@@ -238,10 +238,10 @@ public class Scheduler {
 
     public boolean time_conflict(Course course1, Course course2) {
         System.out.println("Checking time conflict between " + course1.getName() + " and " + course2.getName());
-        String startTime1 = course1.getstart_time();
-        String endTime1 = course1.getend_time();
-        String startTime2 = course2.getstart_time();
-        String endTime2 = course2.getend_time();
+        String startTime1 = course1.getStartTime();
+        String endTime1 = course1.getEndTime();
+        String startTime2 = course2.getStartTime();
+        String endTime2 = course2.getEndTime();
 
         if (!isValidTimeFormat(startTime1) || !isValidTimeFormat(endTime1)
                 || !isValidTimeFormat(startTime2) || !isValidTimeFormat(endTime2)) {

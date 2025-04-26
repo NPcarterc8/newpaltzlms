@@ -1,27 +1,31 @@
 package name.coreycarter.classes;
 
+import java.util.List;
+
 public class Course {
 
     private String name;
     private String teacher;
     private boolean majorcourse;
-    private Course lab;
     private int credits;
     private String start_time;
     private String end_time;
+    private Course lab;
+    private List<String> weekdays;
 
-    public Course(String name, String teacher, boolean majorcourse, int credits, String start_time, String end_time, Course lab) {
+    public Course(String name, String teacher, boolean majorcourse, int credits, String start_time, String end_time, List<String> weekdays, Course lab) {
         this.name = name;
         this.teacher = teacher;
         this.majorcourse = majorcourse;
-        this.lab = lab;
         this.credits = credits;
         this.start_time = start_time;
         this.end_time = end_time;
+        this.weekdays = weekdays;
+        this.lab = lab;
     }
 
-    public Course(String name, String teacher, boolean majorcourse, int credits, String start_time, String end_time) {
-        this(name, teacher, majorcourse, credits, start_time, end_time, null);
+    public Course(String name, String teacher, boolean majorcourse, int credits, String start_time, String end_time, List<String> weekdays) {
+        this(name, teacher, majorcourse, credits, start_time, end_time, weekdays, null);
     }
 
     public String getName() {
@@ -32,11 +36,11 @@ public class Course {
         return lab;
     }
 
-    public String getstart_time() {
+    public String getStartTime() {
         return start_time;
     }
 
-    public String getend_time() {
+    public String getEndTime() {
         return end_time;
     }
 
@@ -44,8 +48,12 @@ public class Course {
         return credits;
     }
 
-    public String toString() {
-        return name;
+    public List<String> getWeekdays() {
+        return weekdays;
     }
 
+    @Override
+    public String toString() {
+        return name + (weekdays != null ? " (" + String.join(", ", weekdays) + ")" : "");
+    }
 }
