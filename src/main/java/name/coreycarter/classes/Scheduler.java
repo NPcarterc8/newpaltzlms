@@ -47,6 +47,10 @@ public class Scheduler {
                         System.out.println("Time conflict detected between " + course1.getName() + " and " + course2.getName() + ". Removing " + course2.getName() + " from hold.");
                         hold.remove(course2);
                         unscheduledCourses.add(course2);
+                    } else if (weekday_conflict(course1, course2)) {
+                        System.out.println("Weekday conflict detected between " + course1.getName() + " and " + course2.getName() + ". Removing " + course2.getName() + " from hold.");
+                        hold.remove(course2);
+                        unscheduledCourses.add(course2);
                     }
                 }
             }
@@ -61,6 +65,22 @@ public class Scheduler {
 
         System.out.println("Finished scheduling all courses.");
         return sequence;
+    }
+
+    private boolean weekday_conflict(Course course1, Course course2) {
+        System.out.println("Checking weekday conflict between " + course1.getName() + " and " + course2.getName());
+        List<String> weekdays1 = course1.getWeekdays();
+        List<String> weekdays2 = course2.getWeekdays();
+
+        for (String day1 : weekdays1) {
+            if (weekdays2.contains(day1)) {
+                System.out.println("Weekday conflict found on " + day1 + " between " + course1.getName() + " and " + course2.getName());
+                return true;
+            }
+        }
+
+        System.out.println("No weekday conflict between " + course1.getName() + " and " + course2.getName());
+        return false;
     }
 
     private List<Course> processUnscheduledCourses(List<Course> unscheduledCourses, List<Course> hold, Graph<Course> courseGraph, List<Semester> old_semester, int maxCredits, int credits) {
