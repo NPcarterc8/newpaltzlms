@@ -18,6 +18,9 @@ public class Semester {
         this.term=term;
         this.courses=courses;
     }
+    public List<Course> getCourses() {
+        return courses;
+    }
     public String toString() {
         return String.valueOf(year) + " " + term.name() + " " + courses;
     }

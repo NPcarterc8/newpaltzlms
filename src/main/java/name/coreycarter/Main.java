@@ -16,7 +16,7 @@ public class Main {
         // Example Courses
         Course Math101 = new Course("Math 101", true, 3, "08:00", "09:30");
         Course Math102 = new Course("Math 102", true, 3, "10:00", "11:30");
-        Course CS101 = new Course("CS 101", true, 3, "12:00", "13:30");
+        Course CS101 = new Course("CS 101", true, 3, "08:00", "09:30");
         Course CS102 = new Course("CS 102", true, 3, "14:00", "15:30");
         Course CS201 = new Course("CS 201", true, 3, "16:00", "17:30");
         Course Algorithms = new Course("Algorithms", true, 3, "18:00", "19:30");
@@ -42,9 +42,9 @@ public class Main {
         courseGraph.addEdge(Physics103, Lab103, true); // Bidirectional → Co-Req
         
         try {
-            //System.out.println("fjhbfjkidsa" +courseGraph.getIncomingEdges(Physics101));
-            System.out.println(test.credits_sequence(t1,courseGraph));
-            System.out.println(test.class_time(Lab101));
+            System.out.println(test.sequence(t1,courseGraph));
+            System.out.println(test.checkTimeConflicts(test.sequence(t1, courseGraph)));
+            System.out.println(test.time_conflict(Math101, CS101));
         } catch (RuntimeException e) {
             e.printStackTrace();
             System.out.println(e.getMessage());

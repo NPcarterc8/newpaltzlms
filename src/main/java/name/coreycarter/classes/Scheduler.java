@@ -1,16 +1,19 @@
 package name.coreycarter.classes;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import name.coreycarter.utils.Graph;
 
 public class Scheduler {
+
     public int class_count = 0;
+
     public Scheduler(Graph<Course> graph) {
         // Constructor
     }
 
-    public List<Semester> credits_sequence(Students info, Graph<Course> courseGraph) {
+    public List<Semester> sequence(Students info, Graph<Course> courseGraph) {
         List<Course> hold = new ArrayList<>();
         List<Semester> old_semester = new ArrayList<>();
         List<Course> unscheduledCourses = new ArrayList<>();
@@ -31,7 +34,21 @@ public class Scheduler {
             int credits = 0;
             unscheduledCourses = processUnscheduledCourses(unscheduledCourses, hold, courseGraph, old_semester, maxCredits, credits);
 
-            credits = processNewCourses(unscheduledCourses,totalCourses, courseGraph, hold, old_semester, maxCredits, credits);
+            credits = processNewCourses(unscheduledCourses, totalCourses, courseGraph, hold, old_semester, maxCredits, credits);
+
+            // Check for time conflicts before finalizing the semester
+            List<Course> tempHold = new ArrayList<>(hold);
+            for (int i = 0; i < tempHold.size(); i++) {
+                Course course1 = tempHold.get(i);
+                for (int j = i + 1; j < tempHold.size(); j++) {
+                    Course course2 = tempHold.get(j);
+                    if (time_conflict(course1, course2)) {
+                        System.out.println("Time conflict detected between " + course1.getName() + " and " + course2.getName() + ". Removing " + course2.getName() + " from hold.");
+                        hold.remove(course2);
+                        unscheduledCourses.add(course2);
+                    }
+                }
+            }
 
             updateOldSemester(old_semester, semester, hold);
             sequence.add(new Semester(semester, Semester.Term.Fall, new ArrayList<>(hold)));
@@ -40,7 +57,7 @@ public class Scheduler {
             System.out.println("ECurrent class count: " + class_count);
             System.out.println("ECourses left to process: " + unscheduledCourses);
         }
-        
+
         System.out.println("Finished scheduling all courses.");
         return sequence;
     }
@@ -55,7 +72,7 @@ public class Scheduler {
                 hold.add(course);
                 credits += course.getCredits();
                 System.out.println("Added course to hold: " + course.getName());
-                if(course.getLab()!=null){
+                if (course.getLab() != null) {
                     hold.add(course.getLab());
                     credits += course.getLab().getCredits();
                     System.out.println("LAdded course to hold: " + course.getLab().getName());
@@ -68,8 +85,8 @@ public class Scheduler {
         return unscheduledCourses;
     }
 
-    private int processNewCourses(List<Course> unscheduledCourses ,int totalCourses, Graph<Course> courseGraph, List<Course> hold, List<Semester> old_semester, int maxCredits, int credits) {
-        
+    private int processNewCourses(List<Course> unscheduledCourses, int totalCourses, Graph<Course> courseGraph, List<Course> hold, List<Semester> old_semester, int maxCredits, int credits) {
+
         while (credits < maxCredits && class_count < totalCourses) {
             Course course = courseGraph.topologicalSortM().get(class_count);
             System.out.println("Considering new course: " + course.getName());
@@ -77,7 +94,7 @@ public class Scheduler {
                 hold.add(course);
                 credits += course.getCredits();
                 System.out.println("Added course to hold: " + course.getName());
-                if(course.getLab()!=null){
+                if (course.getLab() != null) {
                     hold.add(course.getLab());
                     credits += course.getLab().getCredits();
                     System.out.println("xAdded course to hold: " + course.getLab().getName());
@@ -158,49 +175,104 @@ public class Scheduler {
         System.out.println("No bidirectional dependencies found for course: " + course.getName());
         return false;
     }
+
     public String class_time(Course course) {
         System.out.println("Calculating class time for course: " + course.getName());
         try {
             String startTimeStr = course.getstart_time();
             String endTimeStr = course.getend_time();
 
-            if (startTimeStr == null || endTimeStr == null || !startTimeStr.matches("\\d{2}:\\d{2}") || !endTimeStr.matches("\\d{2}:\\d{2}")) {
+            if (!isValidTimeFormat(startTimeStr) || !isValidTimeFormat(endTimeStr)) {
                 System.out.println("Invalid time format for course: " + course.getName());
-                return "Invalid time format"; // Return error message if time format is invalid
+                return "Invalid time format";
             }
 
-            // Remove the colon from the time strings
-            startTimeStr = startTimeStr.replace(":", "");
-            endTimeStr = endTimeStr.replace(":", "");
-
-            int startTime = Integer.parseInt(startTimeStr); // Assuming start_time is in HHmm format (24-hour time)
-            int endTime = Integer.parseInt(endTimeStr); // Assuming end_time is in HHmm format (24-hour time)
-
-            int startHours = startTime / 100;
-            int startMinutes = startTime % 100;
-            int endHours = endTime / 100;
-            int endMinutes = endTime % 100;
-
-            int totalStartMinutes = startHours * 60 + startMinutes;
-            int totalEndMinutes = endHours * 60 + endMinutes;
-
-            int totalMinutes = totalEndMinutes - totalStartMinutes;
+            int totalMinutes = calculateTotalMinutes(startTimeStr, endTimeStr);
 
             if (totalMinutes < 0) {
                 System.out.println("Invalid time range for course: " + course.getName());
-                return "Invalid time range"; // Return error message if time range is invalid
+                return "Invalid time range";
             }
 
-            int hours = totalMinutes / 60;
-            int minutes = totalMinutes % 60;
-
-            String result = hours + " hours and " + minutes + " minutes";
+            String result = formatDuration(totalMinutes);
             System.out.println("Class time for course " + course.getName() + ": " + result);
             return result;
         } catch (NumberFormatException e) {
             System.out.println("Invalid time format for course: " + course.getName());
-            System.out.println("Returning default time: 0 hours and 0 minutes due to invalid time format.");
-            return "Invalid time format"; // Return error message if time format is invalid
+            return "Invalid time format";
         }
     }
+
+    private boolean isValidTimeFormat(String time) {
+        return time != null && time.matches("\\d{2}:\\d{2}");
+    }
+
+    private int calculateTotalMinutes(String startTimeStr, String endTimeStr) {
+        int startTime = Integer.parseInt(startTimeStr.replace(":", ""));
+        int endTime = Integer.parseInt(endTimeStr.replace(":", ""));
+
+        int startHours = startTime / 100;
+        int startMinutes = startTime % 100;
+        int endHours = endTime / 100;
+        int endMinutes = endTime % 100;
+
+        int totalStartMinutes = startHours * 60 + startMinutes;
+        int totalEndMinutes = endHours * 60 + endMinutes;
+
+        return totalEndMinutes - totalStartMinutes;
+    }
+
+    private String formatDuration(int totalMinutes) {
+        int hours = totalMinutes / 60;
+        int minutes = totalMinutes % 60;
+        return hours + " hours and " + minutes + " minutes";
+    }
+
+    public boolean time_conflict(Course course1, Course course2) {
+        System.out.println("Checking time conflict between " + course1.getName() + " and " + course2.getName());
+        String startTime1 = course1.getstart_time();
+        String endTime1 = course1.getend_time();
+        String startTime2 = course2.getstart_time();
+        String endTime2 = course2.getend_time();
+
+        if (!isValidTimeFormat(startTime1) || !isValidTimeFormat(endTime1)
+                || !isValidTimeFormat(startTime2) || !isValidTimeFormat(endTime2)) {
+            System.out.println("Invalid time format for one or both courses.");
+            return false;
+        }
+
+        int start1 = Integer.parseInt(startTime1.replace(":", ""));
+        int end1 = Integer.parseInt(endTime1.replace(":", ""));
+        int start2 = Integer.parseInt(startTime2.replace(":", ""));
+        int end2 = Integer.parseInt(endTime2.replace(":", ""));
+
+        boolean conflict = (start1 < end2 && start2 < end1);
+        System.out.println("Time conflict: " + conflict);
+        return conflict;
+    }
+
+    public boolean checkTimeConflicts(List<Semester> sequence) {
+        System.out.println("Checking for time conflicts in the sequence...");
+        for (Semester semester : sequence) {
+            System.out.println("Checking semester: " + semester);
+            List<Course> courses = semester.getCourses();
+            for (int i = 0; i < courses.size(); i++) {
+                Course course1 = courses.get(i);
+                System.out.println("Checking course: " + course1.getName());
+                for (int j = i + 1; j < courses.size(); j++) {
+                    Course course2 = courses.get(j);
+                    System.out.println("Comparing with course: " + course2.getName());
+                    if (time_conflict(course1, course2)) {
+                        System.out.println("Time conflict detected between " + course1.getName() + " and " + course2.getName() + " in semester " + semester);
+                        return true; // Conflict found
+                    } else {
+                        System.out.println("No conflict between " + course1.getName() + " and " + course2.getName());
+                    }
+                }
+            }
+        }
+        System.out.println("Finished checking for time conflicts. No conflicts found.");
+        return false; // No conflicts found
+    }
+
 }
