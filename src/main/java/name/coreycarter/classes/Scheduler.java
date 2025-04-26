@@ -158,21 +158,49 @@ public class Scheduler {
         System.out.println("No bidirectional dependencies found for course: " + course.getName());
         return false;
     }
-    public int[] class_time(Course course) {
+    public String class_time(Course course) {
         System.out.println("Calculating class time for course: " + course.getName());
-        int startTime = course.getstartTime(); // Assuming start_time is in minutes since midnight
-        int endTime = course.getendTime(); // Assuming end_time is in minutes since midnight
-        int totalMinutes = endTime - startTime;
+        try {
+            String startTimeStr = course.getstart_time();
+            String endTimeStr = course.getend_time();
 
-        if (totalMinutes < 0) {
-            System.out.println("Invalid time range for course: " + course.getName());
-            return new int[]{0, 0}; // Return 0 hours and 0 minutes if time range is invalid
+            if (startTimeStr == null || endTimeStr == null || !startTimeStr.matches("\\d{2}:\\d{2}") || !endTimeStr.matches("\\d{2}:\\d{2}")) {
+                System.out.println("Invalid time format for course: " + course.getName());
+                return "Invalid time format"; // Return error message if time format is invalid
+            }
+
+            // Remove the colon from the time strings
+            startTimeStr = startTimeStr.replace(":", "");
+            endTimeStr = endTimeStr.replace(":", "");
+
+            int startTime = Integer.parseInt(startTimeStr); // Assuming start_time is in HHmm format (24-hour time)
+            int endTime = Integer.parseInt(endTimeStr); // Assuming end_time is in HHmm format (24-hour time)
+
+            int startHours = startTime / 100;
+            int startMinutes = startTime % 100;
+            int endHours = endTime / 100;
+            int endMinutes = endTime % 100;
+
+            int totalStartMinutes = startHours * 60 + startMinutes;
+            int totalEndMinutes = endHours * 60 + endMinutes;
+
+            int totalMinutes = totalEndMinutes - totalStartMinutes;
+
+            if (totalMinutes < 0) {
+                System.out.println("Invalid time range for course: " + course.getName());
+                return "Invalid time range"; // Return error message if time range is invalid
+            }
+
+            int hours = totalMinutes / 60;
+            int minutes = totalMinutes % 60;
+
+            String result = hours + " hours and " + minutes + " minutes";
+            System.out.println("Class time for course " + course.getName() + ": " + result);
+            return result;
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid time format for course: " + course.getName());
+            System.out.println("Returning default time: 0 hours and 0 minutes due to invalid time format.");
+            return "Invalid time format"; // Return error message if time format is invalid
         }
-
-        int hours = totalMinutes / 60;
-        int minutes = totalMinutes % 60;
-
-        System.out.println("Class time for course " + course.getName() + ": " + hours + " hours and " + minutes + " minutes");
-        return new int[]{hours, minutes};
     }
 }

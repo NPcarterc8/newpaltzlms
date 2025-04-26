@@ -44,6 +44,7 @@ public class Main {
         try {
             //System.out.println("fjhbfjkidsa" +courseGraph.getIncomingEdges(Physics101));
             System.out.println(test.credits_sequence(t1,courseGraph));
+            System.out.println(test.class_time(Lab101));
         } catch (RuntimeException e) {
             e.printStackTrace();
             System.out.println(e.getMessage());
