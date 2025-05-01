@@ -1,10 +1,12 @@
 package name.coreycarter;
 
 import java.util.Arrays;
+import java.util.List;
 
 import name.coreycarter.classes.Course;
 import name.coreycarter.classes.Scheduler;
 import name.coreycarter.classes.Sect;
+import name.coreycarter.classes.Semester;
 import name.coreycarter.classes.Students;
 import name.coreycarter.utils.Graph;
 
@@ -18,6 +20,7 @@ public class Main {
 
         // Section definitions
         Sect math101_01 = new Sect("01", "t", "08:00", "09:30", Arrays.asList("Monday", "Wednesday", "Friday"));
+        Sect math101_02 = new Sect("02", "t", "11:00", "12:30", Arrays.asList("Monday", "Wednesday"));
         Sect math102_01 = new Sect("01", "t", "10:00", "11:30", Arrays.asList("Monday", "Wednesday", "Friday"));
         Sect cs101_01 = new Sect("01", "t", "11:00", "12:30", Arrays.asList("Monday", "Wednesday"));
         Sect algorithms_01 = new Sect("01", "t", "13:00", "14:30", Arrays.asList("Tuesday", "Thursday"));
@@ -32,7 +35,7 @@ public class Main {
         Sect physics103_01 = new Sect("01", "t", "18:00", "19:30", Arrays.asList("Tuesday", "Thursday"));
 
         // Courses
-        Course Math101 = new Course("Math 101", true, 3, Arrays.asList(math101_01));
+        Course Math101 = new Course("Math 101", true, 3, Arrays.asList(math101_01, math101_02));
         Course Math102 = new Course("Math 102", true, 3, Arrays.asList(math102_01));
         Course CS101 = new Course("CS 101", true, 3, Arrays.asList(cs101_01));
         Course CS102 = new Course("CS 102", true, 3, Arrays.asList(cs102_01));
@@ -53,7 +56,15 @@ public class Main {
         courseGraph.addEdge(Physics102, Physics103, false);
 
         try {
-            System.out.println(test.sequence(t1, courseGraph));
+            List<Course> allCourses = Arrays.asList(Math101, Math102, CS101, CS102, CS201, Algorithms, Physics101, Physics102, Physics103);
+            List<List<Semester>> allSchedules = test.generateAllSchedules(t1, courseGraph, 3);
+            for (int i = 0; i < allSchedules.size(); i++) {
+                System.out.println("\n=================== SCHEDULE #" + (i + 1) + " ===================");
+                for (Semester sem : allSchedules.get(i)) {
+                    System.out.println(sem);
+                }
+            }
+
         } catch (RuntimeException e) {
             e.printStackTrace();
             System.out.println(e.getMessage());
