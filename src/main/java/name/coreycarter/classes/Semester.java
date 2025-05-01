@@ -1,5 +1,6 @@
 package name.coreycarter.classes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Semester {
@@ -7,7 +8,7 @@ public class Semester {
     //single semter(bulid when your done wiht it)
     final int year;
     final Term term;
-    final List<Course> courses;
+    final List<Sect> sections;
 
     public enum Term {
         Fall,
@@ -16,27 +17,34 @@ public class Semester {
         Summer
     }
 
-    public Semester(int year, Term term, List<Course> courses) {
+    public Semester(int year, Term term, List<Sect> sections) {
         this.year = year;
         this.term = term;
-        this.courses = courses;
+        this.sections = sections;
     }
 
-    public List<Course> getCourses() {
-        return courses;
+    public List<Sect> getSections() {
+        return sections;
+    }
+    public List<Course> getCourses(){
+        List<Course> x= new ArrayList<>();
+        for (Sect section: sections) {
+            x.add(section.getCourse());
+        }
+        return x;
     }
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(year).append(" ").append(term.name()).append(":\n");
-        for (Course course : courses) {
-            sb.append(course.getName())
+        for (Sect section: sections) {
+            sb.append(section.getName())
                     .append(" (")
-                    .append(course.getStartTime())
+                    .append(section.getStartTime())
                     .append(" - ")
-                    .append(course.getEndTime())
+                    .append(section.getEndTime())
                     .append(", ")
-                    .append(course.getWeekdays())
+                    .append(section.getWeekdays())
                     .append(")\n");
         }
         return sb.toString();

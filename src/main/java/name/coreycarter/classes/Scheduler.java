@@ -14,7 +14,7 @@ public class Scheduler {
     }
 
     public List<Semester> sequence(Students info, Graph<Course> courseGraph) {
-        List<Course> hold = new ArrayList<>();
+        List<Sect> hold = new ArrayList<>();
         List<Semester> old_semester = new ArrayList<>();
         List<Course> unscheduledCourses = new ArrayList<>();
         List<Semester> sequence = new ArrayList<>();
@@ -37,20 +37,20 @@ public class Scheduler {
             credits = processNewCourses(unscheduledCourses, totalCourses, courseGraph, hold, old_semester, maxCredits, credits);
 
             // Check for time and weekday conflicts before finalizing the semester
-            List<Course> tempHold = new ArrayList<>(hold);
+            List<Sect> tempHold = new ArrayList<>(hold);
             for (int i = 0; i < tempHold.size(); i++) {
-                Course course1 = tempHold.get(i);
+                Sect course1 = tempHold.get(i);
                 for (int j = i + 1; j < tempHold.size(); j++) {
-                    Course course2 = tempHold.get(j);
+                    Sect course2 = tempHold.get(j);
                     System.out.println("Checking time conflict between " + course1.getName() + " (Start: " + course1.getStartTime() + ", End: " + course1.getEndTime() + ") and " + course2.getName() + " (Start: " + course2.getStartTime() + ", End: " + course2.getEndTime() + ").");
                     if (time_conflict(course1, course2)) {
                         System.out.println("Time conflict detected between " + course1.getName() + " and " + course2.getName() + ". Removing " + course2.getName() + " from hold.");
                         hold.remove(course2);
-                        unscheduledCourses.add(course2);
+                        unscheduledCourses.add(course2.getCourse());
                     } else if (weekday_conflict(course1, course2)) {
                         System.out.println("Weekday conflict detected between " + course1.getName() + " and " + course2.getName() + ". Removing " + course2.getName() + " from hold.");
                         hold.remove(course2);
-                        unscheduledCourses.add(course2);
+                        unscheduledCourses.add(course2.getCourse());
                     }
                 }
             }
@@ -67,7 +67,7 @@ public class Scheduler {
         return sequence;
     }
 
-    private boolean weekday_conflict(Course course1, Course course2) {
+    private boolean weekday_conflict(Sect course1, Sect course2) {
         System.out.println("Checking weekday conflict between " + course1.getName() + " and " + course2.getName());
         List<String> weekdays1 = course1.getWeekdays();
         List<String> weekdays2 = course2.getWeekdays();
@@ -83,19 +83,20 @@ public class Scheduler {
         return false;
     }
 
-    private List<Course> processUnscheduledCourses(List<Course> unscheduledCourses, List<Course> hold, Graph<Course> courseGraph, List<Semester> old_semester, int maxCredits, int credits) {
+    private List<Course> processUnscheduledCourses(List<Course> unscheduledCourses, List<Sect> hold, Graph<Course> courseGraph, List<Semester> old_semester, int maxCredits, int credits) {
         List<Course> tempLeft = new ArrayList<>(unscheduledCourses);
         unscheduledCourses.clear();
 
         for (Course course : tempLeft) {
             System.out.println("Considering leftover course: " + course.getName());
             if (credits < maxCredits && take_course(course, hold, courseGraph, old_semester)) {
-                hold.add(course);
+                // pick a raddom index
+                hold.add(course.getSect().get(0));
                 credits += course.getCredits();
                 System.out.println("Added course to hold: " + course.getName());
                 if (course.getLab() != null) {
                     hold.add(course.getLab());
-                    credits += course.getLab().getCredits();
+                    credits += course.getlabCredits();
                     System.out.println("LAdded course to hold: " + course.getLab().getName());
                 }
             } else {
@@ -106,18 +107,18 @@ public class Scheduler {
         return unscheduledCourses;
     }
 
-    private int processNewCourses(List<Course> unscheduledCourses, int totalCourses, Graph<Course> courseGraph, List<Course> hold, List<Semester> old_semester, int maxCredits, int credits) {
+    private int processNewCourses(List<Course> unscheduledCourses, int totalCourses, Graph<Course> courseGraph, List<Sect> hold, List<Semester> old_semester, int maxCredits, int credits) {
 
         while (credits < maxCredits && class_count < totalCourses) {
             Course course = courseGraph.topologicalSortM().get(class_count);
             System.out.println("Considering new course: " + course.getName());
             if (take_course(course, hold, courseGraph, old_semester)) {
-                hold.add(course);
+                hold.add(course.getSect().get(0));
                 credits += course.getCredits();
                 System.out.println("Added course to hold: " + course.getName());
                 if (course.getLab() != null) {
                     hold.add(course.getLab());
-                    credits += course.getLab().getCredits();
+                    credits += course.getlabCredits();
                     System.out.println("xAdded course to hold: " + course.getLab().getName());
                 }
             } else {
@@ -129,16 +130,16 @@ public class Scheduler {
         return credits;
     }
 
-    private void updateOldSemester(List<Semester> old_semester, int semester, List<Course> hold) {
+    private void updateOldSemester(List<Semester> old_semester, int semester, List<Sect> hold) {
         old_semester.add(new Semester(semester, Semester.Term.Fall, new ArrayList<>(hold)));
         System.out.println("Old semester contents updated with current hold: " + old_semester);
     }
 
-    public String printSemester(Students info, Graph<Course> courseGraph, int semester, List<Course> hold, List<Semester> sequence) {
+    public String printSemester(Students info, Graph<Course> courseGraph, int semester, List<Sect> hold, List<Semester> sequence) {
         StringBuilder semesterOutput = new StringBuilder("semester " + semester + ": ");
         Semester t2 = new Semester(semester, Semester.Term.Fall, hold);
         System.out.println("Printing semester: " + t2);
-        for (Course course : hold) {
+        for (Sect course : hold) {
             String time = class_time(course);
             String startTime = course.getStartTime();
             String endTime = course.getEndTime();
@@ -151,7 +152,7 @@ public class Scheduler {
         return semesterOutput.toString();
     }
 
-    public boolean take_course(Course i, List<Course> hold, Graph<Course> courseGraph, List<Semester> final_semesters) {
+    public boolean take_course(Course i, List<Sect> hold, Graph<Course> courseGraph, List<Semester> final_semesters) {
         System.out.println("Checking if course can be taken: " + i.getName());
         List<Course> deps_list = courseGraph.getIncomingEdges(i);
         for (Course dep : deps_list) {
@@ -168,7 +169,7 @@ public class Scheduler {
         System.out.println("Checking dependency: " + dep.getName());
         for (Semester semester : final_semesters) {
             System.out.println("Checking in semester: " + semester);
-            if (semester.courses.contains(dep)) {
+            if (semester.getCourses().contains(dep)) {
                 System.out.println("Dependency satisfied: " + dep.getName());
                 return false;
             }
@@ -204,7 +205,7 @@ public class Scheduler {
         return false;
     }
 
-    public String class_time(Course course) {
+    public String class_time(Sect course) {
         System.out.println("Calculating class time for course: " + course.getName());
         try {
             String startTimeStr = course.getStartTime();
@@ -256,7 +257,7 @@ public class Scheduler {
         return hours + " hours and " + minutes + " minutes";
     }
 
-    public boolean time_conflict(Course course1, Course course2) {
+    public boolean time_conflict(Sect course1, Sect course2) {
         System.out.println("Checking time conflict between " + course1.getName() + " and " + course2.getName());
         String startTime1 = course1.getStartTime();
         String endTime1 = course1.getEndTime();
@@ -283,12 +284,12 @@ public class Scheduler {
         System.out.println("Checking for time conflicts in the sequence...");
         for (Semester semester : sequence) {
             System.out.println("Checking semester: " + semester);
-            List<Course> courses = semester.getCourses();
+            List<Sect> courses = semester.getSections();
             for (int i = 0; i < courses.size(); i++) {
-                Course course1 = courses.get(i);
+                Sect course1 = courses.get(i);
                 System.out.println("Checking course: " + course1.getName());
                 for (int j = i + 1; j < courses.size(); j++) {
-                    Course course2 = courses.get(j);
+                    Sect course2 = courses.get(j);
                     System.out.println("Comparing with course: " + course2.getName());
                     if (time_conflict(course1, course2)) {
                         System.out.println("Time conflict detected between " + course1.getName() + " and " + course2.getName() + " in semester " + semester);
@@ -302,10 +303,10 @@ public class Scheduler {
         System.out.println("Finished checking for time conflicts. No conflicts found.");
         return false; // No conflicts found
     }
-    public List<String> getDays(List<Course> courses) {
+    public List<String> getDays(List<Sect> courses) {
         System.out.println("Getting days for the list of courses...");
         List<String> days = new ArrayList<>();
-        for (Course course : courses) {
+        for (Sect course : courses) {
             System.out.println("Processing course: " + course.getName());
             days.addAll(course.getWeekdays());
         }
