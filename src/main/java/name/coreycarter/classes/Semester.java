@@ -1,11 +1,12 @@
 package name.coreycarter.classes;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Semester {
 
-    //single semter(bulid when your done wiht it)
     final int year;
     final Term term;
     final List<Sect> sections;
@@ -26,23 +27,22 @@ public class Semester {
     public List<Sect> getSections() {
         return sections;
     }
-    public List<Course> getCourses(){
-        List<Course> x= new ArrayList<>();
-        for (Sect section: sections) {
-            x.add(section.getCourse());
+
+    public List<Course> getCourses() {
+        Set<Course> unique = new LinkedHashSet<>();
+        for (Sect section : sections) {
+            unique.add(section.getCourse());
         }
-        return x;
+        return new ArrayList<>(unique);
     }
 
     @Override
-public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append(year).append(" ").append(term).append(":\n");
-    for (Sect s : sections) {
-        sb.append("  ").append(s.toString()).append("\n");
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(year).append(" ").append(term).append(":\n");
+        for (Sect s : sections) {
+            sb.append("  ").append(s.toString()).append("\n");
+        }
+        return sb.toString();
     }
-    return sb.toString();
-}
-
-
 }
