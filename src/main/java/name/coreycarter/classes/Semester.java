@@ -34,20 +34,15 @@ public class Semester {
         return x;
     }
 
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(year).append(" ").append(term.name()).append(":\n");
-        for (Sect section: sections) {
-            sb.append(section.getName())
-                    .append(" (")
-                    .append(section.getStartTime())
-                    .append(" - ")
-                    .append(section.getEndTime())
-                    .append(", ")
-                    .append(section.getWeekdays())
-                    .append(")\n");
-        }
-        return sb.toString();
+    @Override
+public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(year).append(" ").append(term).append(":\n");
+    for (Sect s : sections) {
+        sb.append("  ").append(s.toString()).append("\n");
     }
+    return sb.toString();
+}
+
 
 }

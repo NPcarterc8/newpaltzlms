@@ -4,8 +4,8 @@ import java.util.Arrays;
 
 import name.coreycarter.classes.Course;
 import name.coreycarter.classes.Scheduler;
-import name.coreycarter.classes.Students;
 import name.coreycarter.classes.Sect;
+import name.coreycarter.classes.Students;
 import name.coreycarter.utils.Graph;
 
 public class Main {

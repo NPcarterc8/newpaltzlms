@@ -44,7 +44,8 @@ public class Sect {
 
     @Override
     public String toString() {
-        return course.getName() + (weekdays != null ? " (" + String.join(", ", weekdays) + ")" : "");
+        return course.getName() + " (" + start_time + " - " + end_time + ", " + String.join(", ", weekdays) + ")";
     }
+    
 }
    
