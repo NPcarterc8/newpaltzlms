@@ -91,6 +91,14 @@
           <version>3.0.0</version>
         </plugin>
       </plugins>
+    <plugin>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-maven-plugin</artifactId>
+        <version>0.0.8</version>
+        <configuration>
+            <mainClass>name.coreycarter.SchedulerUI</mainClass> <!-- Change this to your main class -->
+        </configuration>
+    </plugin>
     </pluginManagement>
   </build>
 </project>
