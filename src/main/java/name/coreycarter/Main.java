@@ -78,6 +78,7 @@ public class Main {
 
         try {
             List<List<Semester>> allSchedules = test.generateAllSchedules(t1, courseGraph, 3, maxYears);
+
             for (int i = 0; i < allSchedules.size(); i++) {
                 System.out.println("\n=================== SCHEDULE #" + (i + 1) + " ===================");
                 for (Semester sem : allSchedules.get(i)) {
