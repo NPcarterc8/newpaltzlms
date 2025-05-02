@@ -13,30 +13,46 @@ import name.coreycarter.utils.Graph;
 public class Scheduler {
 
     public int class_count = 0;
-    private static final int MAX_STALLED = 10;
+    private static final int MAX_STALLED = 100;
     private static final Semester.Term[] TERM_SEQUENCE = Semester.Term.values();
 
     public Scheduler(Graph<Course> graph) {
         System.out.println("Scheduler initialized with graph: " + graph);
     }
 
-    public List<List<Semester>> generateAllSchedules(Students info, Graph<Course> courseGraph, int maxSchedules) {
+    public List<List<Semester>> generateAllSchedules(Students info, Graph<Course> courseGraph, int maxSchedules, int maxYears) {
         List<List<Semester>> allSchedules = new ArrayList<>();
+        Set<String> seenSchedules = new HashSet<>();  // Track unique schedules as string signatures
         List<Course> originalOrder = courseGraph.topologicalSortM();
 
-        for (int i = 0; i < maxSchedules; i++) {
+        int attempts = 0;
+        while (allSchedules.size() < maxSchedules && attempts < maxSchedules * 5) {
+            attempts++;  // Prevent infinite loops if too many duplicates
             Collections.shuffle(originalOrder);
             class_count = 0;
-            List<Semester> schedule = sequence(info, courseGraph, new ArrayList<>(originalOrder));
+
+            List<Semester> schedule = sequence(info, courseGraph, new ArrayList<>(originalOrder), maxYears);
             if (!schedule.isEmpty()) {
-                allSchedules.add(schedule);
+                String signature = scheduleSignature(schedule);
+                if (!seenSchedules.contains(signature)) {
+                    seenSchedules.add(signature);
+                    allSchedules.add(schedule);
+                }
             }
         }
-
+        System.out.println("\n " + allSchedules.size() + " valid schedule(s) found within your " + maxYears + "-year limit.");
         return allSchedules;
     }
 
-    public List<Semester> sequence(Students info, Graph<Course> courseGraph, List<Course> courseOrder) {
+    private String scheduleSignature(List<Semester> schedule) {
+        StringBuilder sb = new StringBuilder();
+        for (Semester s : schedule) {
+            sb.append(s.toString().trim()).append("|");
+        }
+        return sb.toString();
+    }
+
+    public List<Semester> sequence(Students info, Graph<Course> courseGraph, List<Course> courseOrder, int maxYears) {
         List<Sect> hold = new ArrayList<>();
         List<Semester> old_semester = new ArrayList<>();
         List<Course> unscheduledCourses = new ArrayList<>();
@@ -68,13 +84,22 @@ public class Scheduler {
 
             if (class_count == initialClassCount && unscheduledCourses.size() == initialUnscheduledCount) {
                 stalledRounds++;
-                if (stalledRounds >= MAX_STALLED) break;
+                if (stalledRounds >= MAX_STALLED) {
+                    break;
+                }
             } else {
                 stalledRounds = 0;
             }
 
             termIndex++;
-            if (currentTerm == Semester.Term.Summer) year++;
+            if (currentTerm == Semester.Term.Summer) {
+                year++;
+            }
+            if (year - info.start_date() >= maxYears) {
+                System.out.println("Schedule exceeds " + maxYears + "-year limit. Discarding...");
+                return new ArrayList<>();
+            }
+            
             hold.clear();
         }
 
@@ -82,13 +107,15 @@ public class Scheduler {
     }
 
     private List<Course> processUnscheduledCourses(List<Course> unscheduledCourses, List<Sect> hold,
-                                                   Graph<Course> courseGraph, List<Semester> old_semester,
-                                                   int maxCredits, int credits) {
+            Graph<Course> courseGraph, List<Semester> old_semester,
+            int maxCredits, int credits) {
         List<Course> tempLeft = new ArrayList<>(unscheduledCourses);
         unscheduledCourses.clear();
 
         for (Course course : tempLeft) {
-            if (credits >= maxCredits) break;
+            if (credits >= maxCredits) {
+                break;
+            }
 
             if (!take_course(course, hold, courseGraph, old_semester)) {
                 unscheduledCourses.add(course);
@@ -112,15 +139,17 @@ public class Scheduler {
                 }
             }
 
-            if (!added) unscheduledCourses.add(course);
+            if (!added) {
+                unscheduledCourses.add(course);
+            }
         }
 
         return unscheduledCourses;
     }
 
     private int processNewCourses(List<Course> courseOrder, List<Course> unscheduledCourses, int totalCourses,
-                                  Graph<Course> courseGraph, List<Sect> hold, List<Semester> old_semester,
-                                  int maxCredits, int credits) {
+            Graph<Course> courseGraph, List<Sect> hold, List<Semester> old_semester,
+            int maxCredits, int credits) {
 
         while (credits < maxCredits && class_count < totalCourses) {
             Course course = courseOrder.get(class_count);
@@ -148,7 +177,9 @@ public class Scheduler {
                 }
             }
 
-            if (!added) unscheduledCourses.add(course);
+            if (!added) {
+                unscheduledCourses.add(course);
+            }
         }
 
         return credits;
@@ -171,7 +202,9 @@ public class Scheduler {
     private List<Sect> validateSectionConflicts(List<Sect> hold, List<Course> unscheduledCourses, Set<String> failedThisSemester) {
         List<Sect> validatedHold = new ArrayList<>();
         Map<Course, List<Sect>> groupedByCourse = new HashMap<>();
-        for (Sect s : hold) groupedByCourse.computeIfAbsent(s.getCourse(), k -> new ArrayList<>()).add(s);
+        for (Sect s : hold) {
+            groupedByCourse.computeIfAbsent(s.getCourse(), k -> new ArrayList<>()).add(s);
+        }
         hold.clear();
 
         for (Map.Entry<Course, List<Sect>> entry : groupedByCourse.entrySet()) {
@@ -189,7 +222,9 @@ public class Scheduler {
                         break;
                     }
                 }
-                if (added) break;
+                if (added) {
+                    break;
+                }
             }
             if (!added && sections.size() == 1) {
                 validatedHold.add(sections.get(0));
@@ -203,7 +238,9 @@ public class Scheduler {
             Sect course1 = tempHold.get(i);
             for (int j = i + 1; j < tempHold.size(); j++) {
                 Sect course2 = tempHold.get(j);
-                if (course1 == course2) continue;
+                if (course1 == course2) {
+                    continue;
+                }
 
                 boolean timeConflict = time_conflict(course1, course2);
                 boolean weekdayConflict = weekday_conflict(course1, course2);
@@ -285,5 +322,5 @@ public class Scheduler {
     public int Graph_size(Graph<Course> courseGraph) {
         return courseGraph.topologicalSortM().size();
     }
-    
+
 }
