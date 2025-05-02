@@ -33,6 +33,10 @@ public class SchedulerUI {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1000, 650);
         frame.setLayout(new BorderLayout(10, 10));
+        GridBagConstraints gbc = new GridBagConstraints();
+gbc.insets = new Insets(5, 5, 5, 5);
+gbc.anchor = GridBagConstraints.WEST;
+
 
         JLabel header = new JLabel("Course Schedule Generator", JLabel.CENTER);
         header.setFont(new Font("SansSerif", Font.BOLD, 24));
@@ -43,7 +47,7 @@ public class SchedulerUI {
         JPanel inputPanel = new JPanel(new GridBagLayout());
         inputPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Scheduler Options", TitledBorder.LEFT, TitledBorder.TOP));
 
-        GridBagConstraints gbc = new GridBagConstraints();
+        //GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.anchor = GridBagConstraints.WEST;
 
@@ -103,6 +107,19 @@ public class SchedulerUI {
         row++;
         gbc.gridx = 0; gbc.gridy = row; gbc.gridwidth = 2;
         inputPanel.add(generateBtn, gbc);
+        gbc.gridy++;
+JButton viewGraphBtn = new JButton("View Course Graph");
+inputPanel.add(viewGraphBtn, gbc);
+viewGraphBtn.addActionListener(e -> {
+    JTextArea graphView = new JTextArea(courseGraph.toString());
+    graphView.setFont(new Font("Monospaced", Font.PLAIN, 12));
+    graphView.setEditable(false);
+    JScrollPane scroll = new JScrollPane(graphView);
+    scroll.setPreferredSize(new Dimension(600, 400));
+
+    JOptionPane.showMessageDialog(frame, scroll, "Course Dependency Graph", JOptionPane.INFORMATION_MESSAGE);
+});
+
 
         // ===== Output Area =====
         JTextArea outputArea = new JTextArea();
@@ -112,6 +129,90 @@ public class SchedulerUI {
         scrollPane.setBorder(BorderFactory.createTitledBorder("Schedules"));
 
         frame.add(inputPanel, BorderLayout.WEST);
+        JPanel coursePanel = new JPanel(new GridBagLayout());
+coursePanel.setBorder(BorderFactory.createTitledBorder("Add New Course"));
+
+JTextField courseNameField = new JTextField(10);
+JCheckBox isMajorCheck = new JCheckBox("Is Major Course");
+
+JCheckBox fallTerm = new JCheckBox("Fall");
+JCheckBox springTerm = new JCheckBox("Spring");
+JCheckBox winterTerm = new JCheckBox("Winter");
+JCheckBox summerTerm = new JCheckBox("Summer");
+
+JTextArea prereqArea = new JTextArea(3, 20);
+prereqArea.setBorder(BorderFactory.createTitledBorder("Prerequisites (comma-separated)"));
+
+JButton addCourseBtn = new JButton("Add Course");
+
+GridBagConstraints courseGbc = new GridBagConstraints();
+courseGbc.insets = new Insets(5, 5, 5, 5);
+courseGbc.anchor = GridBagConstraints.WEST;
+
+int courseRow = 0;
+courseGbc.gridx = 0; courseGbc.gridy = courseRow;
+coursePanel.add(new JLabel("Course Name:"), courseGbc);
+courseGbc.gridx = 1; coursePanel.add(courseNameField, courseGbc);
+
+courseRow++;
+courseGbc.gridx = 0; courseGbc.gridy = courseRow;
+coursePanel.add(new JLabel("Major Course?"), courseGbc);
+courseGbc.gridx = 1; coursePanel.add(isMajorCheck, courseGbc);
+
+courseRow++;
+courseGbc.gridx = 0; courseGbc.gridy = courseRow;
+coursePanel.add(new JLabel("Available Terms:"), courseGbc);
+JPanel termBoxPanel = new JPanel();
+termBoxPanel.add(fallTerm); termBoxPanel.add(springTerm);
+termBoxPanel.add(winterTerm); termBoxPanel.add(summerTerm);
+courseGbc.gridx = 1; coursePanel.add(termBoxPanel, courseGbc);
+
+courseRow++;
+courseGbc.gridx = 0; courseGbc.gridy = courseRow;
+coursePanel.add(new JLabel("Prerequisites:"), courseGbc);
+courseGbc.gridx = 1; coursePanel.add(prereqArea, courseGbc);
+
+courseRow++;
+courseGbc.gridx = 0; courseGbc.gridy = courseRow; courseGbc.gridwidth = 2;
+coursePanel.add(addCourseBtn, courseGbc);
+addCourseBtn.addActionListener(e -> {
+    String courseName = courseNameField.getText().trim();
+    boolean isMajor = isMajorCheck.isSelected();
+
+    List<Semester.Term> terms = new ArrayList<>();
+    if (fallTerm.isSelected()) terms.add(Semester.Term.Fall);
+    if (springTerm.isSelected()) terms.add(Semester.Term.Spring);
+    if (winterTerm.isSelected()) terms.add(Semester.Term.Winter);
+    if (summerTerm.isSelected()) terms.add(Semester.Term.Summer);
+
+    if (courseName.isEmpty() || terms.isEmpty()) {
+        JOptionPane.showMessageDialog(frame, "Enter a course name and at least one term.", "Input Error", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    Course newCourse = new Course(courseName, isMajor, 3, new ArrayList<>(), terms);
+    courseGraph.addVertex(newCourse);
+
+    String[] prereqNames = prereqArea.getText().split(",");
+    for (String name : prereqNames) {
+        name = name.trim();
+        if (name.isEmpty()) continue;
+
+        for (Course existing : courseGraph.nodeset()) {
+            if (existing.getName().equalsIgnoreCase(name)) {
+                courseGraph.addEdge(existing, newCourse, false);
+                break;
+            }
+        }
+    }
+
+    JOptionPane.showMessageDialog(frame, "Course added successfully.");
+});
+
+
+// Add the coursePanel to the frame
+frame.add(coursePanel, BorderLayout.SOUTH);
+
         frame.add(scrollPane, BorderLayout.CENTER);
 
         generateBtn.addActionListener(e -> {
@@ -134,7 +235,7 @@ public class SchedulerUI {
                     return;
                 }
 
-                student = new Students(studentName, major, "Student", maxCredits, 2020);
+                //students = new Students(studentName, major, "Student", maxCredits, 2020);
                 List<List<Semester>> schedules = scheduler.generateAllSchedules(student, courseGraph, scheduleCount, maxYears, allowedTerms);
 
                 if (schedules.isEmpty()) {

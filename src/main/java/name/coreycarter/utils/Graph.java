@@ -1,4 +1,5 @@
 package name.coreycarter.utils;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -25,11 +26,12 @@ public class Graph<T> {
     // This function adds the edge
     // between source to destination
     public void addEdge(T source, T destination, boolean isCoReq) {
-        if (!map.containsKey(source)) addVertex(source);
-        if (!map.containsKey(destination)&& isCoReq!=true){
-            addVertex(destination); 
-        } 
-        
+        if (!map.containsKey(source)) {
+            addVertex(source);
+        }
+        if (!map.containsKey(destination) && isCoReq != true) {
+            addVertex(destination);
+        }
 
         if (isCoReq) {
             coRequisites.putIfAbsent(source, new ArrayList<>());
@@ -72,20 +74,22 @@ public class Graph<T> {
         if (map.get(s).contains(d)) {
             System.out.println("The graph has an edge between " + s + " and " + d + ".");
         } else {
-                System.out.println("The graph does not contain an edge between " + s + " and " + d + ".");
-            }
+            System.out.println("The graph does not contain an edge between " + s + " and " + d + ".");
         }
-    
-        public List<T> printneighbours(T s) {
-            if (!map.containsKey(s))
-                return Collections.emptyList();
-            System.out.println("The neighbours of " + s + " are");
-            for (T w : map.get(s))
-                System.out.print(w + ",");
-            return map.get(s);
-        }
+    }
 
-        public List<T> Tneighbours(T s) {
+    public List<T> printneighbours(T s) {
+        if (!map.containsKey(s)) {
+            return Collections.emptyList();
+        }
+        System.out.println("The neighbours of " + s + " are");
+        for (T w : map.get(s)) {
+            System.out.print(w + ",");
+        }
+        return map.get(s);
+    }
+
+    public List<T> Tneighbours(T s) {
         return map.getOrDefault(s, Collections.emptyList());
     }
 
@@ -110,40 +114,50 @@ public class Graph<T> {
     // Existing methods in the Graph class
 
 // Method to get incoming edges for a given node
-public List<T> getIncomingEdges(T node) {
-    List<T> incomingEdges = new ArrayList<>();
-    for (Map.Entry<T, List<T>> entry : map.entrySet()) {
-        if (entry.getValue().contains(node)) {
-            incomingEdges.add(entry.getKey());
+    public List<T> getIncomingEdges(T node) {
+        List<T> incomingEdges = new ArrayList<>();
+        for (Map.Entry<T, List<T>> entry : map.entrySet()) {
+            if (entry.getValue().contains(node)) {
+                incomingEdges.add(entry.getKey());
+            }
         }
+        return incomingEdges;
     }
-    return incomingEdges;
-}
 
     // Prints the adjacency list of each vertex.
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
+        builder.append("=== Course Dependency Graph ===\n\n");
 
-        for (T v : map.keySet()) {
-            builder.append(v.toString() + ": ");
-            for (T w : map.get(v)) {
-                builder.append(w.toString() + " ");
+        for (T course : map.keySet()) {
+            builder.append("➤ ").append(course.toString()).append("\n");
+
+            List<T> deps = map.get(course);
+            if (deps.isEmpty()) {
+                builder.append("    └─ No prerequisites\n");
+            } else {
+                for (T dep : deps) {
+                    builder.append("    └─ ").append(dep.toString()).append("\n");
+                }
             }
             builder.append("\n");
         }
 
-        builder.append("\nCo-Requisites:\n");
-        for (T v : coRequisites.keySet()) {
-            builder.append(v.toString() + " -> ");
-            for (T w : coRequisites.get(v)) {
-                builder.append(w.toString() + " ");
+        if (!coRequisites.isEmpty()) {
+            builder.append("=== Co-Requisites ===\n\n");
+            for (T course : coRequisites.keySet()) {
+                builder.append("➤ ").append(course.toString()).append(" has co-requisites:\n");
+                for (T co : coRequisites.get(course)) {
+                    builder.append("    └─ ").append(co.toString()).append("\n");
+                }
+                builder.append("\n");
             }
-            builder.append("\n");
         }
 
         return builder.toString();
     }
+
     public List<T> getOutgoingEdges(T node) {
         List<T> outgoingEdges = new ArrayList<>();
         if (map.containsKey(node)) {

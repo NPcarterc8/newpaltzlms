@@ -56,5 +56,10 @@ public class Course {
         return lab_credits;
     }
 
+    @Override
+    public String toString() {
+        return name + " (" + credits + " credits" + (majorcourse ? ", Major" : "") + ")";
+    }
     
+
 }
