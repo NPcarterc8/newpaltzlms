@@ -125,14 +125,15 @@ public class Graph<T> {
     }
 
     // Prints the adjacency list of each vertex.
+    //@Override
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("=== Course Dependency Graph ===\n\n");
-
+    
         for (T course : map.keySet()) {
             builder.append("➤ ").append(course.toString()).append("\n");
-
+    
             List<T> deps = map.get(course);
             if (deps.isEmpty()) {
                 builder.append("    └─ No prerequisites\n");
@@ -143,7 +144,7 @@ public class Graph<T> {
             }
             builder.append("\n");
         }
-
+    
         if (!coRequisites.isEmpty()) {
             builder.append("=== Co-Requisites ===\n\n");
             for (T course : coRequisites.keySet()) {
@@ -154,9 +155,10 @@ public class Graph<T> {
                 builder.append("\n");
             }
         }
-
+    
         return builder.toString();
     }
+    
 
     public List<T> getOutgoingEdges(T node) {
         List<T> outgoingEdges = new ArrayList<>();

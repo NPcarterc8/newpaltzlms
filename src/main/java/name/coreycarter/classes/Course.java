@@ -57,9 +57,10 @@ public class Course {
     }
 
     @Override
-    public String toString() {
-        return name + " (" + credits + " credits" + (majorcourse ? ", Major" : "") + ")";
-    }
+public String toString() {
+    return name + " (" + credits + " credits" + (majorcourse ? ", Major" : "") + ")";
+}
+
     
 
 }
