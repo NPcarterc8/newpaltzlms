@@ -44,19 +44,18 @@ public class Main {
         Sect physics201_lab = new Sect("L1", "t", "08:00", "09:30", Arrays.asList("Friday"));
 
         // Courses
-        Course Math101 = new Course("Math 101", true, 3, Arrays.asList(math101_01, math101_02));
-        Course Math102 = new Course("Math 102", true, 3, Arrays.asList(math102_01));
-        Course CS101 = new Course("CS 101", true, 3, Arrays.asList(cs101_01));
-        Course CS102 = new Course("CS 102", true, 3, Arrays.asList(cs102_01));
-        Course CS201 = new Course("CS 201", true, 3, Arrays.asList(cs201_01));
-        Course Algorithms = new Course("Algorithms", true, 3, Arrays.asList(algorithms_01));
-        Course Physics101 = new Course("Physics 101", true, 3, 1, Arrays.asList(physics101_lecture), physics101_lab);
-        Course Physics102 = new Course("Physics 102", true, 3, 1, Arrays.asList(physics102_lecture), physics102_lab);
-        Course Physics103 = new Course("Physics 103", true, 3, Arrays.asList(physics103_01));
-        Course Math201 = new Course("Math 201", true, 3, Arrays.asList(math201_01, math201_02));
-        Course CS301 = new Course("CS 301", true, 3, Arrays.asList(cs301_01, cs301_02));
-        Course Physics201 = new Course("Physics 201", true, 3, 1, Arrays.asList(physics201_lecture), physics201_lab);
-
+        Course Math101 = new Course("Math 101", true, 3, Arrays.asList(math101_01, math101_02), Arrays.asList(Semester.Term.Fall, Semester.Term.Spring, Semester.Term.Winter, Semester.Term.Summer));
+        Course Math102 = new Course("Math 102", true, 3, Arrays.asList(math102_01), Arrays.asList(Semester.Term.Fall, Semester.Term.Spring, Semester.Term.Winter, Semester.Term.Summer));
+        Course CS101 = new Course("CS 101", true, 3, Arrays.asList(cs101_01), Arrays.asList(Semester.Term.Fall, Semester.Term.Spring, Semester.Term.Winter, Semester.Term.Summer));
+        Course CS102 = new Course("CS 102", true, 3, Arrays.asList(cs102_01), Arrays.asList(Semester.Term.Fall, Semester.Term.Spring, Semester.Term.Winter, Semester.Term.Summer));
+        Course CS201 = new Course("CS 201", true, 3, Arrays.asList(cs201_01), Arrays.asList(Semester.Term.Fall, Semester.Term.Spring, Semester.Term.Winter, Semester.Term.Summer));
+        Course Algorithms = new Course("Algorithms", true, 3, Arrays.asList(algorithms_01), Arrays.asList(Semester.Term.Fall, Semester.Term.Spring, Semester.Term.Winter, Semester.Term.Summer));
+        Course Physics101 = new Course("Physics 101", true, 3, 1, Arrays.asList(physics101_lecture), physics101_lab, Arrays.asList(Semester.Term.Fall, Semester.Term.Spring, Semester.Term.Winter, Semester.Term.Summer));
+        Course Physics102 = new Course("Physics 102", true, 3, 1, Arrays.asList(physics102_lecture), physics102_lab, Arrays.asList(Semester.Term.Fall, Semester.Term.Spring, Semester.Term.Winter, Semester.Term.Summer));
+        Course Physics103 = new Course("Physics 103", true, 3, Arrays.asList(physics103_01), Arrays.asList(Semester.Term.Fall, Semester.Term.Spring, Semester.Term.Winter, Semester.Term.Summer));
+        Course Math201 = new Course("Math 201", true, 3, Arrays.asList(math201_01, math201_02), Arrays.asList(Semester.Term.Fall, Semester.Term.Spring, Semester.Term.Winter, Semester.Term.Summer));
+        Course CS301 = new Course("CS 301", true, 3, Arrays.asList(cs301_01, cs301_02), Arrays.asList(Semester.Term.Fall, Semester.Term.Spring, Semester.Term.Winter, Semester.Term.Summer));
+        Course Physics201 = new Course("Physics 201", true, 3, 1, Arrays.asList(physics201_lecture), physics201_lab, Arrays.asList(Semester.Term.Fall, Semester.Term.Spring, Semester.Term.Winter, Semester.Term.Summer));
         // Dependencies
         courseGraph.addEdge(Math101, Math102, false);
         courseGraph.addEdge(CS201, Physics101, false);

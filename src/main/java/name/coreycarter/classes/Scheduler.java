@@ -72,8 +72,8 @@ public class Scheduler {
             int initialClassCount = class_count;
             int initialUnscheduledCount = unscheduledCourses.size();
 
-            unscheduledCourses = processUnscheduledCourses(unscheduledCourses, hold, courseGraph, old_semester, maxCredits, credits);
-            credits = processNewCourses(courseOrder, unscheduledCourses, totalCourses, courseGraph, hold, old_semester, maxCredits, credits);
+            unscheduledCourses = processUnscheduledCourses(unscheduledCourses, hold, courseGraph, old_semester, maxCredits, credits, currentTerm);
+            credits = processNewCourses(courseOrder, unscheduledCourses, totalCourses, courseGraph, hold, old_semester, maxCredits, credits, currentTerm);
 
             hold = validateSectionConflicts(hold, unscheduledCourses, failedThisSemester);
 
@@ -99,7 +99,7 @@ public class Scheduler {
                 System.out.println("Schedule exceeds " + maxYears + "-year limit. Discarding...");
                 return new ArrayList<>();
             }
-            
+
             hold.clear();
         }
 
@@ -108,7 +108,7 @@ public class Scheduler {
 
     private List<Course> processUnscheduledCourses(List<Course> unscheduledCourses, List<Sect> hold,
             Graph<Course> courseGraph, List<Semester> old_semester,
-            int maxCredits, int credits) {
+            int maxCredits, int credits, Semester.Term currentTerm) {
         List<Course> tempLeft = new ArrayList<>(unscheduledCourses);
         unscheduledCourses.clear();
 
@@ -116,7 +116,11 @@ public class Scheduler {
             if (credits >= maxCredits) {
                 break;
             }
-
+            if (!course.getAvailableTerms().contains(currentTerm)) {
+                unscheduledCourses.add(course);
+                continue;
+            }
+        
             if (!take_course(course, hold, courseGraph, old_semester)) {
                 unscheduledCourses.add(course);
                 continue;
@@ -149,12 +153,16 @@ public class Scheduler {
 
     private int processNewCourses(List<Course> courseOrder, List<Course> unscheduledCourses, int totalCourses,
             Graph<Course> courseGraph, List<Sect> hold, List<Semester> old_semester,
-            int maxCredits, int credits) {
+            int maxCredits, int credits, Semester.Term currentTerm) {
 
         while (credits < maxCredits && class_count < totalCourses) {
             Course course = courseOrder.get(class_count);
             class_count++;
-
+            if (!course.getAvailableTerms().contains(currentTerm)) {
+                unscheduledCourses.add(course);
+                continue;
+            }
+        
             if (!take_course(course, hold, courseGraph, old_semester)) {
                 unscheduledCourses.add(course);
                 continue;
