@@ -20,7 +20,7 @@ public class Scheduler {
         System.out.println("Scheduler initialized with graph: " + graph);
     }
 
-    public List<List<Semester>> generateAllSchedules(Students info, Graph<Course> courseGraph, int maxSchedules, int maxYears) {
+    public List<List<Semester>> generateAllSchedules(Students info, Graph<Course> courseGraph, int maxSchedules, int maxYears,List<Semester.Term> allowedTerms) {
         List<List<Semester>> allSchedules = new ArrayList<>();
         Set<String> seenSchedules = new HashSet<>();  // Track unique schedules as string signatures
         List<Course> originalOrder = courseGraph.topologicalSortM();
@@ -31,7 +31,7 @@ public class Scheduler {
             Collections.shuffle(originalOrder);
             class_count = 0;
 
-            List<Semester> schedule = sequence(info, courseGraph, new ArrayList<>(originalOrder), maxYears);
+            List<Semester> schedule = sequence(info, courseGraph, new ArrayList<>(originalOrder), maxYears, allowedTerms);
             if (!schedule.isEmpty()) {
                 String signature = scheduleSignature(schedule);
                 if (!seenSchedules.contains(signature)) {
@@ -52,7 +52,7 @@ public class Scheduler {
         return sb.toString();
     }
 
-    public List<Semester> sequence(Students info, Graph<Course> courseGraph, List<Course> courseOrder, int maxYears) {
+    public List<Semester> sequence(Students info, Graph<Course> courseGraph, List<Course> courseOrder, int maxYears, List<Semester.Term> allowedTerms) {
         List<Sect> hold = new ArrayList<>();
         List<Semester> old_semester = new ArrayList<>();
         List<Course> unscheduledCourses = new ArrayList<>();
@@ -66,7 +66,7 @@ public class Scheduler {
         int stalledRounds = 0;
 
         while (class_count < totalCourses || !unscheduledCourses.isEmpty()) {
-            Semester.Term currentTerm = TERM_SEQUENCE[termIndex % TERM_SEQUENCE.length];
+            Semester.Term currentTerm = allowedTerms.get(termIndex % allowedTerms.size());
             failedThisSemester.clear();
             int credits = 0;
             int initialClassCount = class_count;
@@ -92,9 +92,9 @@ public class Scheduler {
             }
 
             termIndex++;
-            if (currentTerm == Semester.Term.Summer) {
+            if ((termIndex + 1) % allowedTerms.size() == 0) {
                 year++;
-            }
+            }            
             if (year - info.start_date() >= maxYears) {
                 System.out.println("Schedule exceeds " + maxYears + "-year limit. Discarding...");
                 return new ArrayList<>();

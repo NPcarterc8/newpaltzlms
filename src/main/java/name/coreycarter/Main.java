@@ -1,5 +1,6 @@
 package name.coreycarter;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
@@ -73,10 +74,22 @@ public class Main {
         courseGraph.addEdge(Math201, Physics201, false);
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter the maximum number of years to graduate (e.g., 3): ");
-        int maxYears = scanner.nextInt();
+int maxYears = scanner.nextInt();
+scanner.nextLine(); // consume newline
+
+List<Semester.Term> allowedTerms = new ArrayList<>();
+System.out.println("Which terms would you like to take classes in?");
+for (Semester.Term term : Semester.Term.values()) {
+    System.out.print(term + "? (Y/N): ");
+    String input = scanner.nextLine().trim().toLowerCase();
+    if (input.equals("y") || input.equals("yes")) {
+        allowedTerms.add(term);
+    }
+}
+
 
         try {
-            List<List<Semester>> allSchedules = test.generateAllSchedules(t1, courseGraph, 3, maxYears);
+            List<List<Semester>> allSchedules = test.generateAllSchedules(t1, courseGraph, 3, maxYears, allowedTerms);
 
             for (int i = 0; i < allSchedules.size(); i++) {
                 System.out.println("\n=================== SCHEDULE #" + (i + 1) + " ===================");
