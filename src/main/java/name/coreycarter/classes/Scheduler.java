@@ -92,11 +92,12 @@ public class Scheduler {
             }
 
             termIndex++;
-            if ((termIndex + 1) % allowedTerms.size() == 0) {
+            if (termIndex % allowedTerms.size() == 0) {
                 year++;
-            }            
+            }         
+            //System.out.println(year+"   "+ termIndex);   
             if (year - info.start_date() >= maxYears) {
-                System.out.println("Schedule exceeds " + maxYears + "-year limit. Discarding...");
+                System.out.println("Schedule exceeds " + maxYears + "-year limit. Discarding..."+ year);
                 return new ArrayList<>();
             }
 
@@ -195,7 +196,7 @@ public class Scheduler {
 
     private boolean noConflict(Sect newSect, List<Sect> hold) {
         for (Sect existing : hold) {
-            if (time_conflict(newSect, existing) || weekday_conflict(newSect, existing)) {
+            if (weekday_time_conflict(newSect, existing)) {
                 return false;
             }
         }
@@ -223,7 +224,7 @@ public class Scheduler {
                 for (int j = i + 1; j < sections.size(); j++) {
                     Sect s1 = sections.get(i);
                     Sect s2 = sections.get(j);
-                    if (!time_conflict(s1, s2) && !weekday_conflict(s1, s2)) {
+                    if (!weekday_time_conflict(s1, s2)) {
                         validatedHold.add(s1);
                         validatedHold.add(s2);
                         added = true;
@@ -250,16 +251,15 @@ public class Scheduler {
                     continue;
                 }
 
-                boolean timeConflict = time_conflict(course1, course2);
-                boolean weekdayConflict = weekday_conflict(course1, course2);
+                boolean Conflict = weekday_time_conflict(course1, course2);
 
-                if ((timeConflict || weekdayConflict) && course1.getCourse() == course2.getCourse()) {
+                if ((Conflict) && course1.getCourse() == course2.getCourse()) {
                     hold.removeIf(s -> s.getCourse() == course1.getCourse());
                     if (!unscheduledCourses.contains(course1.getCourse()) && !failedThisSemester.contains(course1.getName())) {
                         unscheduledCourses.add(course1.getCourse());
                         failedThisSemester.add(course1.getName());
                     }
-                } else if (timeConflict || weekdayConflict) {
+                } else if (Conflict) {
                     hold.remove(course2);
                     if (!unscheduledCourses.contains(course2.getCourse()) && !failedThisSemester.contains(course2.getName())) {
                         unscheduledCourses.add(course2.getCourse());
@@ -291,40 +291,23 @@ public class Scheduler {
         return true;
     }
 
-    public boolean time_conflict(Sect course1, Sect course2) {
+    public boolean weekday_time_conflict(Sect course1, Sect course2) {
         String startTime1 = course1.getStartTime();
         String endTime1 = course1.getEndTime();
         String startTime2 = course2.getStartTime();
         String endTime2 = course2.getEndTime();
-
-        if (!isValidTimeFormat(startTime1) || !isValidTimeFormat(endTime1)
-                || !isValidTimeFormat(startTime2) || !isValidTimeFormat(endTime2)) {
-            return false;
-        }
-
+        List<String> weekdays1 = course1.getWeekdays();
+        List<String> weekdays2 = course2.getWeekdays();
         int start1 = Integer.parseInt(startTime1.replace(":", ""));
         int end1 = Integer.parseInt(endTime1.replace(":", ""));
         int start2 = Integer.parseInt(startTime2.replace(":", ""));
         int end2 = Integer.parseInt(endTime2.replace(":", ""));
-
-        return (start1 < end2 && start2 < end1);
-    }
-
-    public boolean weekday_conflict(Sect course1, Sect course2) {
-        List<String> weekdays1 = course1.getWeekdays();
-        List<String> weekdays2 = course2.getWeekdays();
-
         for (String day1 : weekdays1) {
-            if (weekdays2.contains(day1)) {
+            if (weekdays2.contains(day1) && (start1 < end2 && start2 < end1)) {
                 return true;
             }
         }
-
         return false;
-    }
-
-    private boolean isValidTimeFormat(String time) {
-        return time != null && time.matches("\\d{2}:\\d{2}");
     }
 
     public int Graph_size(Graph<Course> courseGraph) {

@@ -78,31 +78,51 @@ public class SchedulerUI {
         JButton viewGraphBtn = new JButton("View Course Graph");
 
         int row = 0;
-        gbc.gridx = 0; gbc.gridy = row; inputPanel.add(nameLabel, gbc);
-        gbc.gridx = 1; inputPanel.add(nameField, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        inputPanel.add(nameLabel, gbc);
+        gbc.gridx = 1;
+        inputPanel.add(nameField, gbc);
 
         row++;
-        gbc.gridx = 0; gbc.gridy = row; inputPanel.add(majorLabel, gbc);
-        gbc.gridx = 1; inputPanel.add(majorBox, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        inputPanel.add(majorLabel, gbc);
+        gbc.gridx = 1;
+        inputPanel.add(majorBox, gbc);
 
         row++;
-        gbc.gridx = 0; gbc.gridy = row; inputPanel.add(creditLabel, gbc);
-        gbc.gridx = 1; inputPanel.add(creditSpinner, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        inputPanel.add(creditLabel, gbc);
+        gbc.gridx = 1;
+        inputPanel.add(creditSpinner, gbc);
 
         row++;
-        gbc.gridx = 0; gbc.gridy = row; inputPanel.add(yearLabel, gbc);
-        gbc.gridx = 1; inputPanel.add(yearField, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        inputPanel.add(yearLabel, gbc);
+        gbc.gridx = 1;
+        inputPanel.add(yearField, gbc);
 
         row++;
-        gbc.gridx = 0; gbc.gridy = row; inputPanel.add(countLabel, gbc);
-        gbc.gridx = 1; inputPanel.add(countSpinner, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        inputPanel.add(countLabel, gbc);
+        gbc.gridx = 1;
+        inputPanel.add(countSpinner, gbc);
 
         row++;
-        gbc.gridx = 0; gbc.gridy = row; inputPanel.add(termLabel, gbc);
-        gbc.gridx = 1; inputPanel.add(termPanel, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        inputPanel.add(termLabel, gbc);
+        gbc.gridx = 1;
+        inputPanel.add(termPanel, gbc);
 
         row++;
-        gbc.gridx = 0; gbc.gridy = row; gbc.gridwidth = 2;
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        gbc.gridwidth = 2;
         inputPanel.add(generateBtn, gbc);
         gbc.gridy++;
         inputPanel.add(viewGraphBtn, gbc);
@@ -136,10 +156,18 @@ public class SchedulerUI {
                 String major = (String) majorBox.getSelectedItem();
 
                 List<Semester.Term> allowedTerms = new ArrayList<>();
-                if (fallBox.isSelected()) allowedTerms.add(Semester.Term.Fall);
-                if (springBox.isSelected()) allowedTerms.add(Semester.Term.Spring);
-                if (winterBox.isSelected()) allowedTerms.add(Semester.Term.Winter);
-                if (summerBox.isSelected()) allowedTerms.add(Semester.Term.Summer);
+                if (fallBox.isSelected()) {
+                    allowedTerms.add(Semester.Term.Fall);
+                }
+                if (springBox.isSelected()) {
+                    allowedTerms.add(Semester.Term.Spring);
+                }
+                if (winterBox.isSelected()) {
+                    allowedTerms.add(Semester.Term.Winter);
+                }
+                if (summerBox.isSelected()) {
+                    allowedTerms.add(Semester.Term.Summer);
+                }
 
                 if (allowedTerms.isEmpty()) {
                     JOptionPane.showMessageDialog(frame, "Please select at least one term.", "Input Error", JOptionPane.WARNING_MESSAGE);
@@ -177,27 +205,23 @@ public class SchedulerUI {
         student = new Students("test", "computer science", "Student", 15, 2020);
         scheduler = new Scheduler(courseGraph);
 
-      //  courseGraph = new Graph<>();
-        //student = new Students("test", "computer science", "Student", 15, 2020);
-        //scheduler = new Scheduler(courseGraph);
-
         // Section definitions
         Sect math101_01 = new Sect("01", "t", "08:00", "09:30", Arrays.asList("Monday", "Wednesday", "Friday"));
         Sect math101_02 = new Sect("02", "t", "11:00", "12:30", Arrays.asList("Monday", "Wednesday"));
         Sect math102_01 = new Sect("01", "t", "10:00", "11:30", Arrays.asList("Monday", "Wednesday", "Friday"));
-        Sect cs101_01 = new Sect("01", "t", "11:00", "12:30", Arrays.asList("Monday", "Wednesday"));
+        Sect cs101_01 = new Sect("01", "t", "11:00", "12:30", Arrays.asList("Tuesday", "Thursday"));
         Sect algorithms_01 = new Sect("01", "t", "13:00", "14:30", Arrays.asList("Tuesday", "Thursday"));
         Sect cs102_01 = new Sect("01", "t", "14:00", "15:30", Arrays.asList("Monday", "Wednesday"));
         Sect cs201_01 = new Sect("01", "t", "15:00", "16:30", Arrays.asList("Tuesday", "Thursday"));
 
-        // FIX: Separate lecture & lab sections
+        // // FIX: Separate lecture & lab sections
         Sect physics101_lecture = new Sect("01", "t", "16:00", "17:30", Arrays.asList("Monday", "Wednesday"));
         Sect physics101_lab = new Sect("L1", "t", "09:00", "10:30", Arrays.asList("Friday"));
         Sect physics102_lecture = new Sect("01", "t", "17:00", "18:30", Arrays.asList("Tuesday", "Thursday"));
         Sect physics102_lab = new Sect("L1", "t", "11:00", "12:30", Arrays.asList("Saturday"));
         Sect physics103_01 = new Sect("01", "t", "18:00", "19:30", Arrays.asList("Tuesday", "Thursday"));
 
-        // Additional sections
+        // // Additional sections
         Sect math201_01 = new Sect("01", "t", "09:00", "10:30", Arrays.asList("Tuesday", "Thursday"));
         Sect math201_02 = new Sect("02", "t", "14:00", "15:30", Arrays.asList("Monday", "Wednesday"));
         Sect cs301_01 = new Sect("01", "t", "10:00", "11:30", Arrays.asList("Monday", "Wednesday"));
@@ -218,7 +242,7 @@ public class SchedulerUI {
         Course Math201 = new Course("Math 201", true, 3, Arrays.asList(math201_01, math201_02), Arrays.asList(Semester.Term.Fall, Semester.Term.Spring, Semester.Term.Winter, Semester.Term.Summer));
         Course CS301 = new Course("CS 301", true, 3, Arrays.asList(cs301_01, cs301_02), Arrays.asList(Semester.Term.Fall, Semester.Term.Spring, Semester.Term.Winter, Semester.Term.Summer));
         Course Physics201 = new Course("Physics 201", true, 3, 1, Arrays.asList(physics201_lecture), physics201_lab, Arrays.asList(Semester.Term.Fall, Semester.Term.Spring, Semester.Term.Winter, Semester.Term.Summer));
-        // Dependencies
+        // // Dependencies
         courseGraph.addEdge(Math101, Math102, false);
         courseGraph.addEdge(CS201, Physics101, false);
         courseGraph.addEdge(Math101, Physics101, false);
