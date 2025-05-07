@@ -234,7 +234,7 @@ public class SchedulerUI {
         Course Math102 = new Course("Math 102", true, 3, Arrays.asList(math102_01), Arrays.asList(Semester.Term.Fall, Semester.Term.Spring, Semester.Term.Winter, Semester.Term.Summer));
         Course CS101 = new Course("CS 101", true, 3, Arrays.asList(cs101_01), Arrays.asList(Semester.Term.Fall, Semester.Term.Spring, Semester.Term.Winter, Semester.Term.Summer));
         Course CS102 = new Course("CS 102", true, 3, Arrays.asList(cs102_01), Arrays.asList(Semester.Term.Fall, Semester.Term.Spring, Semester.Term.Winter, Semester.Term.Summer));
-        Course CS201 = new Course("CS 201", true, 3, 0, Arrays.asList(cs201_01),null, Arrays.asList(Semester.Term.Fall, Semester.Term.Spring, Semester.Term.Winter, Semester.Term.Summer), Arrays.asList("2023","2022"));
+        Course CS201 = new Course("CS 201", true, 3, 0, Arrays.asList(cs201_01),null, Arrays.asList(Semester.Term.Fall, Semester.Term.Spring, Semester.Term.Winter, Semester.Term.Summer),null);
         Course Algorithms = new Course("Algorithms", true, 3, Arrays.asList(algorithms_01), Arrays.asList(Semester.Term.Fall, Semester.Term.Spring, Semester.Term.Winter, Semester.Term.Summer));
         Course Physics101 = new Course("Physics 101", true, 3, 1, Arrays.asList(physics101_lecture), physics101_lab, Arrays.asList(Semester.Term.Fall, Semester.Term.Spring, Semester.Term.Winter, Semester.Term.Summer), null);
         Course Physics102 = new Course("Physics 102", true, 3, 1, Arrays.asList(physics102_lecture), physics102_lab, Arrays.asList(Semester.Term.Fall, Semester.Term.Spring, Semester.Term.Winter, Semester.Term.Summer), null);
