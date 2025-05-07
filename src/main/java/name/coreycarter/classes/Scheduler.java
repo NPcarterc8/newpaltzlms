@@ -58,30 +58,54 @@ public class Scheduler {
         List<Course> unscheduledCourses = new ArrayList<>();
         List<Semester> sequence = new ArrayList<>();
         Set<String> failedThisSemester = new HashSet<>();
-
+    
         int maxCredits = info.get_max_credits_per_semeter();
         int year = info.start_date();
         int termIndex = 0;
-        int totalCourses = courseOrder.size();
         int stalledRounds = 0;
-
+        int totalCourses = courseOrder.size();
+    
+        List<Course> scheduledCourses = new ArrayList<>();
+    
         while (class_count < totalCourses || !unscheduledCourses.isEmpty()) {
             Semester.Term currentTerm = allowedTerms.get(termIndex % allowedTerms.size());
             failedThisSemester.clear();
             int credits = 0;
             int initialClassCount = class_count;
             int initialUnscheduledCount = unscheduledCourses.size();
-
-            unscheduledCourses = processUnscheduledCourses(unscheduledCourses, hold, courseGraph, old_semester, maxCredits, credits, currentTerm);
-            credits = processNewCourses(courseOrder, unscheduledCourses, totalCourses, courseGraph, hold, old_semester, maxCredits, credits, currentTerm);
-
+    
+            List<Course> dynamicPriority = new ArrayList<>();
+            List<Course> regularCourses = new ArrayList<>();
+    
+            for (Course c : courseOrder) {
+                if (scheduledCourses.contains(c)) continue;
+                if (c.getPYear() != null && c.getPYear().contains(String.valueOf(year))) {
+                    dynamicPriority.add(c);
+                } else {
+                    regularCourses.add(c);
+                }
+            }
+    
+            List<Course> fullCourseOrder = new ArrayList<>();
+            fullCourseOrder.addAll(dynamicPriority);
+            fullCourseOrder.addAll(regularCourses);
+    
+            courseOrder = fullCourseOrder;
+    
+            unscheduledCourses = processUnscheduledCourses(unscheduledCourses, hold, courseGraph, old_semester, maxCredits, credits, currentTerm, year);
+            credits = processNewCourses(courseOrder, unscheduledCourses, totalCourses, courseGraph, hold, old_semester, maxCredits, credits, currentTerm, year);
+    
+            for (Sect s : hold) {
+                scheduledCourses.add(s.getCourse());
+            }
+    
             hold = validateSectionConflicts(hold, unscheduledCourses, failedThisSemester);
-
+    
             List<Sect> finalizedHold = new ArrayList<>(hold);
             updateOldSemester(old_semester, year, currentTerm, finalizedHold);
             Semester semesterObj = new Semester(year, currentTerm, finalizedHold);
             sequence.add(semesterObj);
-
+    
             if (class_count == initialClassCount && unscheduledCourses.size() == initialUnscheduledCount) {
                 stalledRounds++;
                 if (stalledRounds >= MAX_STALLED) {
@@ -90,47 +114,53 @@ public class Scheduler {
             } else {
                 stalledRounds = 0;
             }
-
+    
             termIndex++;
             if (termIndex % allowedTerms.size() == 0) {
                 year++;
-            }         
-            //System.out.println(year+"   "+ termIndex);   
+            }
+    
             if (year - info.start_date() >= maxYears) {
-                System.out.println("Schedule exceeds " + maxYears + "-year limit. Discarding..."+ year);
+                System.out.println("Schedule exceeds " + maxYears + "-year limit. Discarding..." + year);
                 return new ArrayList<>();
             }
-
+    
             hold.clear();
         }
-
+    
         return sequence;
     }
-
+    
     private List<Course> processUnscheduledCourses(List<Course> unscheduledCourses, List<Sect> hold,
             Graph<Course> courseGraph, List<Semester> old_semester,
-            int maxCredits, int credits, Semester.Term currentTerm) {
+            int maxCredits, int credits, Semester.Term currentTerm, int currentYear) {
         List<Course> tempLeft = new ArrayList<>(unscheduledCourses);
         unscheduledCourses.clear();
-
+    
         for (Course course : tempLeft) {
             if (credits >= maxCredits) {
                 break;
             }
+    
+            if (course.getPYear() != null && !course.getPYear().contains(String.valueOf(currentYear))) {
+                unscheduledCourses.add(course);
+                continue;
+            }
+    
             if (!course.getAvailableTerms().contains(currentTerm)) {
                 unscheduledCourses.add(course);
                 continue;
             }
-        
+    
             if (!take_course(course, hold, courseGraph, old_semester)) {
                 unscheduledCourses.add(course);
                 continue;
             }
-
+    
             List<Sect> options = new ArrayList<>(course.getSect());
             Collections.shuffle(options);
             boolean added = false;
-
+    
             for (Sect section : options) {
                 if (noConflict(section, hold)) {
                     hold.add(section);
@@ -143,36 +173,42 @@ public class Scheduler {
                     break;
                 }
             }
-
+    
             if (!added) {
                 unscheduledCourses.add(course);
             }
         }
-
+    
         return unscheduledCourses;
     }
-
+    
     private int processNewCourses(List<Course> courseOrder, List<Course> unscheduledCourses, int totalCourses,
             Graph<Course> courseGraph, List<Sect> hold, List<Semester> old_semester,
-            int maxCredits, int credits, Semester.Term currentTerm) {
-
+            int maxCredits, int credits, Semester.Term currentTerm, int currentYear) {
+    
         while (credits < maxCredits && class_count < totalCourses) {
             Course course = courseOrder.get(class_count);
             class_count++;
+    
+            if (course.getPYear() != null && !course.getPYear().contains(String.valueOf(currentYear))) {
+                unscheduledCourses.add(course);
+                continue;
+            }
+    
             if (!course.getAvailableTerms().contains(currentTerm)) {
                 unscheduledCourses.add(course);
                 continue;
             }
-        
+    
             if (!take_course(course, hold, courseGraph, old_semester)) {
                 unscheduledCourses.add(course);
                 continue;
             }
-
+    
             List<Sect> options = new ArrayList<>(course.getSect());
             Collections.shuffle(options);
             boolean added = false;
-
+    
             for (Sect section : options) {
                 if (noConflict(section, hold)) {
                     hold.add(section);
@@ -185,14 +221,14 @@ public class Scheduler {
                     break;
                 }
             }
-
+    
             if (!added) {
                 unscheduledCourses.add(course);
             }
         }
-
+    
         return credits;
-    }
+    } 
 
     private boolean noConflict(Sect newSect, List<Sect> hold) {
         for (Sect existing : hold) {
